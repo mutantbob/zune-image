@@ -29,6 +29,49 @@ use crate::JpegDecoder;
 
 pub const DCT_BLOCK: usize = 64;
 
+struct RowSink<'a> {
+    pixels: &'a mut [u8],
+    bytes_per_mcu_row: usize,
+    bytes_per_pixel_row: usize,
+}
+
+impl<'a> RowSink<'a> {
+    fn new(pixels: &'a mut [u8], bytes_per_mcu_row: usize, bytes_per_pixel_row: usize) -> Self {
+        RowSink {
+            pixels,
+            bytes_per_mcu_row,
+            bytes_per_pixel_row,
+        }
+    }
+
+    fn get_block_row(&mut self, i: usize) -> &mut [u8] {
+        let start = i * self.bytes_per_mcu_row;
+        let end = (start + self.bytes_per_mcu_row).min(self.pixels.len());
+        &mut self.pixels[start..end]
+    }
+
+    fn get_block_row_2<'b>(&'b mut self, y: usize, nrows: usize) -> PixelBlock<'b>
+    where
+        'a: 'b,
+    {
+        let start = y * self.bytes_per_pixel_row;
+        let end = ((y + nrows) * self.bytes_per_pixel_row).min(self.pixels.len());
+        PixelBlock {
+            pixels: &mut self.pixels[start..end],
+        }
+    }
+}
+
+struct PixelBlock<'a> {
+    pub pixels: &'a mut [u8],
+}
+
+impl<'a> PixelBlock<'a> {
+    fn finish(&mut self) {}
+}
+
+//
+
 impl<T: ZByteReaderTrait> JpegDecoder<T> {
     /// Check for existence of DC and AC Huffman Tables
     pub(crate) fn check_tables(&self) -> Result<(), DecodeErrors> {
@@ -138,6 +181,24 @@ impl<T: ZByteReaderTrait> JpegDecoder<T> {
 
         let padded_width = calculate_padded_width(width, self.info.sample_ratio);
 
+        let out_components = self.options.jpeg_get_out_colorspace().num_components();
+        // let bytes_per_mcu_row = pixels.len() / mcu_height;
+        let bytes_per_pixel_row = width * self.coeff * out_components * self.v_max;
+        let bytes_per_mcu_row = 8 * bytes_per_pixel_row;
+        zune_core::log::info!("pixel bytes {}; mcu_height {mcu_height}; width {width}; coeff {}; components {out_components}; v_max {}",
+            pixels.len(), self.coeff, self.v_max);
+        zune_core::log::info!(
+            "bytes_per_pixel_row {bytes_per_pixel_row}; bytes_per_mcu_row {bytes_per_mcu_row};"
+        );
+        zune_core::log::info!(
+            "pixel width {}; *3={}; row bytes {}",
+            self.info.width,
+            3 * self.info.width,
+            bytes_per_pixel_row
+        );
+
+        let mut sink = RowSink::new(pixels, bytes_per_mcu_row, bytes_per_pixel_row);
+
         let mut stream = BitStream::new();
         let mut tmp = [0_i32; DCT_BLOCK];
 
@@ -207,7 +268,12 @@ impl<T: ZByteReaderTrait> JpegDecoder<T> {
 
             for i in 0..mcu_height {
                 if stream.overread_by > 0 {
-                    pixels.get_mut(pixels_written..).map(|v| v.fill(128));
+                    let y = pixels_written / bytes_per_pixel_row;
+                    (y..self.info.height.into()).for_each(|j| {
+                        let mut block = sink.get_block_row_2(j, 1);
+                        block.pixels.fill(128);
+                        block.finish()
+                    });
                     if self.options.strict_mode() {
                         return Err(DecodeErrors::FormatStatic("Premature end of buffer"));
                     };
@@ -256,15 +322,19 @@ impl<T: ZByteReaderTrait> JpegDecoder<T> {
                 // process that width up until it's impossible. This is faster than allocation the
                 // full components, which we skipped earlier.
                 if all_components_in_first_scan {
+                    let mut row_pixels_written = 0usize;
+                    let mut row_block = sink.get_block_row_2(i * 8, 8);
                     self.post_process(
-                        pixels,
+                        row_block.pixels,
                         i,
                         mcu_height,
                         width,
                         padded_width,
-                        &mut pixels_written,
+                        &mut row_pixels_written,
                         &mut upsampler_scratch_space,
                     )?;
+                    row_block.finish();
+                    pixels_written += row_pixels_written;
                 }
 
                 match terminate {
@@ -286,7 +356,8 @@ impl<T: ZByteReaderTrait> JpegDecoder<T> {
                     }
                     McuContinuation::Terminate => {
                         warn!("Got terminate signal, will not process further");
-                        pixels.get_mut(pixels_written..).map(|v| v.fill(128));
+                        (pixels_written / bytes_per_mcu_row..mcu_height)
+                            .for_each(|j| sink.get_block_row(j).fill(128));
                         return Ok(());
                     }
                 }
@@ -298,6 +369,7 @@ impl<T: ZByteReaderTrait> JpegDecoder<T> {
         }
 
         if !all_components_in_first_scan {
+            panic!("Bob broke this code");
             self.finish_baseline_decoding(&progressive_mcus, mcu_width, pixels)?;
         }
 
