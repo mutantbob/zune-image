@@ -85,9 +85,9 @@ pub(crate) trait JxlBitEncoder {
 
     /// Encode a chunk writing it to output
     ///
-    /// # Arguments 
+    /// # Arguments
     ///
-    /// * `residual`:  
+    /// * `residual`:
     /// * `n`:  Maximum position for which we encode no more residuals
     /// * `skip`:  Initial position
     /// * `code`:  Prefix code to use for encoding residuals
@@ -136,7 +136,7 @@ impl JxlBitEncoder for UpTo8Bits {
 
     const KMIN_RAW_LENGTH: [u8; 20] = [0; 20];
     const KMAX_RAW_LENGTH: [u8; 20] = [
-        7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 10, 255, 255, 255, 255, 255, 255, 255, 255
+        7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 10, 255, 255, 255, 255, 255, 255, 255, 255,
     ];
 
     type Pixel = i16;

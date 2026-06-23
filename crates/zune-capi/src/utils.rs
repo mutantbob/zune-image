@@ -24,7 +24,7 @@ pub unsafe extern "C" fn zil_guess_format(bytes: *const u8, size: usize) -> ZIma
 
     match zune_image::codecs::guess_format(ZCursor::new(slice)) {
         None => ZImageFormat::ZilUnknownFormat,
-        Some((format, _)) => ZImageFormat::from(format)
+        Some((format, _)) => ZImageFormat::from(format),
     }
 }
 /// Allocate a region of memory

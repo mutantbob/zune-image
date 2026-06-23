@@ -16,7 +16,7 @@ pub(crate) fn expand_bits_to_byte(depth: usize, plte_present: bool, input: &[u8]
             1 => 0xFF,
             2 => 0x55,
             4 => 0x11,
-            _ => return
+            _ => return,
         }
     };
 

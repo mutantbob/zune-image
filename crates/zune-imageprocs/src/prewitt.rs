@@ -87,7 +87,7 @@ fn prewitt_inner_i32<T>(c: &[T; 9]) -> T
 pub fn prewitt_float<T>(in_channel: &[T], out_channel: &mut [T], width: usize, height: usize)
 where
     T: Default + NumOps<T> + Copy,
-    f32: std::convert::From<T>
+    f32: std::convert::From<T>,
 {
     //pad here
     let padded_input = pad(in_channel, width, height, 1, 1, PadMethod::Replicate);
@@ -107,7 +107,7 @@ where
 pub fn prewitt_int<T>(in_channel: &[T], out_channel: &mut [T], width: usize, height: usize)
 where
     T: Default + NumOps<T> + Copy,
-    i32: std::convert::From<T>
+    i32: std::convert::From<T>,
 {
     //pad here
     let padded_input = pad(in_channel, width, height, 1, 1, PadMethod::Replicate);

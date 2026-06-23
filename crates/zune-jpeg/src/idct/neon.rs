@@ -100,7 +100,6 @@ pub unsafe fn idct_neon(in_vector: &mut [i32; 64], out_vector: &mut [i16], strid
             let idct_value = vdupq_n_s16(coeff);
             // to prevent some bad images from crashing
 
-
             macro_rules! store {
                 ($pos:tt,$value:tt) => {
                     let mut tmp = [0; 8];
@@ -209,7 +208,7 @@ pub unsafe fn idct_neon(in_vector: &mut [i32; 64], out_vector: &mut [i16], strid
             ($x:tt,$y:tt,$index:tt,$out:tt) => {
                 let a = condense_bottom_16($x, $y);
 
-                let mut tmp = [0;8];
+                let mut tmp = [0; 8];
 
                 // Clamp the values after packing, we can clamp more values at once
                 let b = clamp256_neon(a);

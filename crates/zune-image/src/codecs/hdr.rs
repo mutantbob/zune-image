@@ -22,7 +22,7 @@ use crate::traits::{DecodeInto, DecoderTrait, EncoderTrait};
 
 impl<T> DecoderTrait for HdrDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     fn decode(&mut self) -> Result<Image, ImageErrors> {
         let bytes = self.decode()?;
@@ -69,7 +69,7 @@ impl From<HdrDecodeErrors> for ImageErrors {
 
 #[derive(Default)]
 pub struct HdrEncoder {
-    options: Option<EncoderOptions>
+    options: Option<EncoderOptions>,
 }
 
 impl HdrEncoder {
@@ -78,7 +78,7 @@ impl HdrEncoder {
     }
     pub fn new_with_options(options: EncoderOptions) -> HdrEncoder {
         HdrEncoder {
-            options: Some(options)
+            options: Some(options),
         }
     }
 }
@@ -89,7 +89,7 @@ impl EncoderTrait for HdrEncoder {
     }
 
     fn encode_inner<T: ZByteWriterTrait>(
-        &mut self, image: &Image, sink: T
+        &mut self, image: &Image, sink: T,
     ) -> Result<usize, ImageErrors> {
         let options = create_options_for_encoder(self.options, image);
 
@@ -138,7 +138,7 @@ impl From<HdrEncodeErrors> for ImgEncodeErrors {
 
 impl<T> DecodeInto for HdrDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     type BufferType = f32;
 

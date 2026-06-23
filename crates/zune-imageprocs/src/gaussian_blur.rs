@@ -27,7 +27,7 @@ use crate::transpose;
 
 #[derive(Default)]
 pub struct GaussianBlur {
-    sigma: f32
+    sigma: f32,
 }
 
 impl GaussianBlur {
@@ -65,7 +65,7 @@ impl OperationsTrait for GaussianBlur {
                             &mut temp,
                             width,
                             height,
-                            self.sigma
+                            self.sigma,
                         );
                     }
                 }
@@ -78,7 +78,7 @@ impl OperationsTrait for GaussianBlur {
                             &mut temp,
                             width,
                             height,
-                            self.sigma
+                            self.sigma,
                         );
                     }
                 }
@@ -90,11 +90,11 @@ impl OperationsTrait for GaussianBlur {
                             &mut temp,
                             width,
                             height,
-                            self.sigma
+                            self.sigma,
                         );
                     }
                 }
-                d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d))
+                d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d)),
             }
         }
 
@@ -114,7 +114,7 @@ impl OperationsTrait for GaussianBlur {
                                 &mut temp,
                                 width,
                                 height,
-                                self.sigma
+                                self.sigma,
                             );
                             Ok(())
                         }
@@ -126,7 +126,7 @@ impl OperationsTrait for GaussianBlur {
                                 &mut temp,
                                 width,
                                 height,
-                                self.sigma
+                                self.sigma,
                             );
                             Ok(())
                         }
@@ -138,11 +138,11 @@ impl OperationsTrait for GaussianBlur {
                                 &mut temp,
                                 width,
                                 height,
-                                self.sigma
+                                self.sigma,
                             );
                             Ok(())
                         }
-                        d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d))
+                        d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d)),
                     });
                     errors.push(result);
                 }
@@ -213,7 +213,7 @@ fn create_box_gauss(sigma: f32) -> [usize; 3] {
 ///  - width,height: Dimensions of the image
 ///  - sigma: A measure of how much to blur the image by.
 pub fn gaussian_blur_u16(
-    in_out_image: &mut [u16], scratch_space: &mut [u16], width: usize, height: usize, sigma: f32
+    in_out_image: &mut [u16], scratch_space: &mut [u16], width: usize, height: usize, sigma: f32,
 ) {
     // use the box blur implementation
     let blur_radii = create_box_gauss(sigma);
@@ -225,7 +225,7 @@ pub fn gaussian_blur_u16(
         match pos % 2 {
             0 => crate::box_blur::box_blur_inner(in_out_image, scratch_space, width, *blur_radius),
             1 => crate::box_blur::box_blur_inner(scratch_space, in_out_image, width, *blur_radius),
-            _ => unreachable!()
+            _ => unreachable!(),
         };
     }
     // transpose
@@ -238,7 +238,7 @@ pub fn gaussian_blur_u16(
         match pos % 2 {
             0 => crate::box_blur::box_blur_inner(in_out_image, scratch_space, height, *blur_radius),
             1 => crate::box_blur::box_blur_inner(scratch_space, in_out_image, height, *blur_radius),
-            _ => unreachable!()
+            _ => unreachable!(),
         };
     }
     // transpose back
@@ -246,7 +246,7 @@ pub fn gaussian_blur_u16(
 }
 
 pub fn gaussian_blur_f32(
-    in_out_image: &mut [f32], scratch_space: &mut [f32], width: usize, height: usize, sigma: f32
+    in_out_image: &mut [f32], scratch_space: &mut [f32], width: usize, height: usize, sigma: f32,
 ) {
     // use the box blur implementation
     let blur_radii = create_box_gauss(sigma);
@@ -260,15 +260,15 @@ pub fn gaussian_blur_f32(
                 in_out_image,
                 scratch_space,
                 width,
-                *blur_radius
+                *blur_radius,
             ),
             1 => crate::box_blur::box_blur_f32_inner(
                 scratch_space,
                 in_out_image,
                 width,
-                *blur_radius
+                *blur_radius,
             ),
-            _ => unreachable!()
+            _ => unreachable!(),
         };
     }
     // transpose
@@ -283,15 +283,15 @@ pub fn gaussian_blur_f32(
                 in_out_image,
                 scratch_space,
                 height,
-                *blur_radius
+                *blur_radius,
             ),
             1 => crate::box_blur::box_blur_f32_inner(
                 scratch_space,
                 in_out_image,
                 height,
-                *blur_radius
+                *blur_radius,
             ),
-            _ => unreachable!()
+            _ => unreachable!(),
         };
     }
     // transpose back
@@ -308,7 +308,7 @@ pub fn gaussian_blur_f32(
 ///  - width,height: Dimensions of the image
 ///  - sigma: A measure of how much to blur the image by.
 pub fn gaussian_blur_u8(
-    in_out_image: &mut [u8], scratch_space: &mut [u8], width: usize, height: usize, sigma: f32
+    in_out_image: &mut [u8], scratch_space: &mut [u8], width: usize, height: usize, sigma: f32,
 ) {
     // use the box blur implementation
     let blur_radii = create_box_gauss(sigma);
@@ -345,7 +345,7 @@ pub fn gaussian_blur_u8(
         match pos % 2 {
             0 => crate::box_blur::box_blur_inner(in_out_image, scratch_space, width, *blur_radius),
             1 => crate::box_blur::box_blur_inner(scratch_space, in_out_image, width, *blur_radius),
-            _ => unreachable!()
+            _ => unreachable!(),
         };
     }
     // transpose
@@ -358,7 +358,7 @@ pub fn gaussian_blur_u8(
         match pos % 2 {
             0 => crate::box_blur::box_blur_inner(in_out_image, scratch_space, height, *blur_radius),
             1 => crate::box_blur::box_blur_inner(scratch_space, in_out_image, height, *blur_radius),
-            _ => unreachable!()
+            _ => unreachable!(),
         };
     }
     // transpose back

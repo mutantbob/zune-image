@@ -32,7 +32,7 @@ pub enum JsonColorspace {
     Luma,
     YCCK,
     BGR,
-    BGRA
+    BGRA,
 }
 
 impl JsonColorspace {
@@ -45,17 +45,17 @@ impl JsonColorspace {
             Self::Luma => ColorSpace::Luma,
             Self::RGBA => ColorSpace::RGBA,
             Self::BGR => ColorSpace::BGR,
-            Self::BGRA => ColorSpace::BGRA
+            Self::BGRA => ColorSpace::BGRA,
         }
     }
 }
 
 #[derive(Clone, Deserialize, Debug)]
 pub struct TestEntry {
-    pub name:       String,
-    pub hash:       u128,
+    pub name: String,
+    pub hash: u128,
     pub colorspace: Option<JsonColorspace>,
-    pub comment:    Option<String>
+    pub comment: Option<String>,
 }
 
 pub fn sample_path() -> PathBuf {

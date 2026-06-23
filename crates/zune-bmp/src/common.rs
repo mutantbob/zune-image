@@ -15,7 +15,7 @@ pub enum BmpCompression {
     RLE8,
     RLE4,
     BITFIELDS,
-    Unknown
+    Unknown,
 }
 
 impl BmpCompression {
@@ -25,7 +25,7 @@ impl BmpCompression {
             1 => Some(BmpCompression::RLE8),
             2 => Some(BmpCompression::RLE4),
             3 => Some(BmpCompression::BITFIELDS),
-            _ => None
+            _ => None,
         }
     }
 }
@@ -37,7 +37,7 @@ pub enum BmpPixelFormat {
     RGBA,
     PAL8,
     GRAY8,
-    RGB
+    RGB,
 }
 
 impl BmpPixelFormat {
@@ -47,7 +47,7 @@ impl BmpPixelFormat {
             BmpPixelFormat::RGBA => 4,
             BmpPixelFormat::PAL8 => 3,
             BmpPixelFormat::GRAY8 => 1,
-            BmpPixelFormat::RGB => 3
+            BmpPixelFormat::RGB => 3,
         }
     }
     pub fn into_colorspace(self) -> ColorSpace {
@@ -56,7 +56,7 @@ impl BmpPixelFormat {
             BmpPixelFormat::RGBA => ColorSpace::RGBA,
             BmpPixelFormat::PAL8 => ColorSpace::RGB,
             BmpPixelFormat::GRAY8 => ColorSpace::Luma,
-            BmpPixelFormat::RGB => ColorSpace::RGB
+            BmpPixelFormat::RGB => ColorSpace::RGB,
         }
     }
 }

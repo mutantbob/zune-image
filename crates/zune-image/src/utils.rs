@@ -116,7 +116,7 @@ fn swizzle_four_channels_fallback<T: Copy + Default>(r: &[&[T]], y: &mut [T]) {
 /// }
 /// ```
 pub fn swizzle_channels<T: Copy + Default + 'static>(
-    channels: &[Channel], output: &mut [T]
+    channels: &[Channel], output: &mut [T],
 ) -> Result<usize, ChannelErrors> {
     match channels.len() {
         0 => Ok(0),

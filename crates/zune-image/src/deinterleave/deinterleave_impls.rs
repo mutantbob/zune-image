@@ -46,7 +46,7 @@ pub fn de_interleave_three_channels_u8(source: &[u8], c1: &mut [u8], c2: &mut [u
 }
 
 pub fn de_interleave_three_channels_u16(
-    source: &[u16], c1: &mut [u16], c2: &mut [u16], c3: &mut [u16]
+    source: &[u16], c1: &mut [u16], c2: &mut [u16], c3: &mut [u16],
 ) {
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
     {
@@ -65,13 +65,13 @@ pub fn de_interleave_three_channels_u16(
 }
 
 pub fn de_interleave_four_channels_u16(
-    source: &[u16], c1: &mut [u16], c2: &mut [u16], c3: &mut [u16], c4: &mut [u16]
+    source: &[u16], c1: &mut [u16], c2: &mut [u16], c3: &mut [u16], c4: &mut [u16],
 ) {
     scalar::de_interleave_four_channels_scalar(source, c1, c2, c3, c4);
 }
 
 pub fn deinterleave_four_channels_u8(
-    source: &[u8], c1: &mut [u8], c2: &mut [u8], c3: &mut [u8], c4: &mut [u8]
+    source: &[u8], c1: &mut [u8], c2: &mut [u8], c3: &mut [u8], c4: &mut [u8],
 ) {
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
     {
@@ -109,7 +109,7 @@ pub fn deinterleave_four_channels_u8(
 /// * `c3`: Output for third component
 ///
 pub fn de_interleave_three_channels_f32(
-    source: &[f32], c1: &mut [f32], c2: &mut [f32], c3: &mut [f32]
+    source: &[f32], c1: &mut [f32], c2: &mut [f32], c3: &mut [f32],
 ) {
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
     {
@@ -128,7 +128,7 @@ pub fn de_interleave_three_channels_f32(
 }
 
 pub fn de_interleave_four_channels_f32(
-    source: &[f32], c1: &mut [f32], c2: &mut [f32], c3: &mut [f32], c4: &mut [f32]
+    source: &[f32], c1: &mut [f32], c2: &mut [f32], c3: &mut [f32], c4: &mut [f32],
 ) {
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
     {

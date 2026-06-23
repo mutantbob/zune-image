@@ -27,14 +27,14 @@ use crate::probe_files::probe_input_files;
 use crate::show_gui::open_in_default_app;
 
 struct CmdPipeline {
-    inner:   Pipeline,
-    formats: Vec<ImageFormat>
+    inner: Pipeline,
+    formats: Vec<ImageFormat>,
 }
 impl CmdPipeline {
     pub fn new() -> CmdPipeline {
         CmdPipeline {
-            inner:   Pipeline::new(),
-            formats: vec![]
+            inner: Pipeline::new(),
+            formats: vec![],
         }
     }
 }
@@ -42,7 +42,7 @@ impl CmdPipeline {
 #[allow(unused_variables)]
 #[allow(clippy::unused_io_amount)] // yes it's what I want
 pub(crate) fn create_and_exec_workflow_from_cmd(
-    args: &ArgMatches, cmd_opts: &CmdOptions
+    args: &ArgMatches, cmd_opts: &CmdOptions,
 ) -> Result<(), ImageErrors> {
     if let Some(view) = args.value_source("probe") {
         if view == CommandLine {
@@ -83,7 +83,7 @@ pub(crate) fn create_and_exec_workflow_from_cmd(
                 if format.has_decoder() {
                     workflow.inner.chain_decoder(Box::new(ZuneFile::new(
                         in_file.to_os_string(),
-                        decoder_options
+                        decoder_options,
                     )));
                 } else {
                     return Err(ImageErrors::ImageDecoderNotImplemented(format));

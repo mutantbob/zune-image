@@ -35,7 +35,6 @@ pub fn idct_int_1x1(in_vector: &mut [i32; 64], mut out_vector: &mut [i16], strid
     for _ in 0..7 {
         out_vector = &mut out_vector[stride..];
         out_vector[..8].fill(coeff);
-
     }
 }
 
@@ -287,7 +286,7 @@ pub fn idct4x4(in_vector: &mut [i32; 64], out_vector: &mut [i16], stride: usize)
             clamp(ws(x3, t0) >> 17),
             clamp(ws(x2, t1) >> 17),
             clamp(ws(x1, t2) >> 17),
-            clamp(ws(x0, t3) >> 17)
+            clamp(ws(x0, t3) >> 17),
         ]);
 
         pos += stride;

@@ -26,7 +26,7 @@ use crate::traits::{DecodeInto, DecoderTrait, EncoderTrait};
 
 impl<T> DecoderTrait for QoiDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     fn decode(&mut self) -> Result<Image, ImageErrors> {
         let pixels = self.decode()?;
@@ -82,7 +82,7 @@ where
 
 #[derive(Copy, Clone, Default)]
 pub struct QoiEncoder {
-    options: Option<EncoderOptions>
+    options: Option<EncoderOptions>,
 }
 
 impl QoiEncoder {
@@ -92,7 +92,7 @@ impl QoiEncoder {
 
     pub fn new_with_options(options: EncoderOptions) -> QoiEncoder {
         QoiEncoder {
-            options: Some(options)
+            options: Some(options),
         }
     }
 }
@@ -103,7 +103,7 @@ impl EncoderTrait for QoiEncoder {
     }
 
     fn encode_inner<T: ZByteWriterTrait>(
-        &mut self, image: &Image, sink: T
+        &mut self, image: &Image, sink: T,
     ) -> Result<usize, ImageErrors> {
         let options = create_options_for_encoder(self.options, image);
 
@@ -166,7 +166,7 @@ impl From<zune_qoi::QoiEncodeErrors> for ImgEncodeErrors {
 
 impl<T> DecodeInto for QoiDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     type BufferType = u8;
 

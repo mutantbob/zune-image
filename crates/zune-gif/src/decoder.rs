@@ -7,25 +7,25 @@ use crate::errors::GifDecoderErrors;
 
 #[derive(Default)]
 struct DisposeArea {
-    _left:   usize,
-    _top:    usize,
-    _width:  usize,
-    _height: usize
+    _left: usize,
+    _top: usize,
+    _width: usize,
+    _height: usize,
 }
 pub struct GifDecoder<T: ZByteReaderTrait> {
-    stream:        ZReader<T>,
-    options:       DecoderOptions,
-    width:         usize,
-    height:        usize,
-    flags:         u8,
-    bgindex:       u8,
-    ratio:         u8,
-    read_headers:  bool,
-    _background:   u16, // current b
-    frame_pos:     usize,
-    pal:           [[u8; 4]; 256],
+    stream: ZReader<T>,
+    options: DecoderOptions,
+    width: usize,
+    height: usize,
+    flags: u8,
+    bgindex: u8,
+    ratio: u8,
+    read_headers: bool,
+    _background: u16, // current b
+    frame_pos: usize,
+    pal: [[u8; 4]; 256],
     _dispose_area: DisposeArea,
-    background:    Vec<u8>
+    background: Vec<u8>,
 }
 
 impl<T: ZByteReaderTrait> GifDecoder<T> {
@@ -46,7 +46,7 @@ impl<T: ZByteReaderTrait> GifDecoder<T> {
             frame_pos: 0,
             pal: [[0; 4]; 256],
             _dispose_area: Default::default(),
-            background: vec![]
+            background: vec![],
         }
     }
     pub fn decode_headers(&mut self) -> Result<(), GifDecoderErrors> {
@@ -73,14 +73,14 @@ impl<T: ZByteReaderTrait> GifDecoder<T> {
             return Err(GifDecoderErrors::TooLargeDimensions(
                 "width",
                 self.options.max_width(),
-                self.width
+                self.width,
             ));
         }
         if self.height > self.options.max_height() {
             return Err(GifDecoderErrors::TooLargeDimensions(
                 "height",
                 self.options.max_height(),
-                self.height
+                self.height,
             ));
         }
         // check if we have a global palette
@@ -130,14 +130,14 @@ impl<T: ZByteReaderTrait> GifDecoder<T> {
             });
     }
     pub fn decode_into(
-        &mut self, output: &mut [u8], two_back: Option<&[u8]>
+        &mut self, output: &mut [u8], two_back: Option<&[u8]>,
     ) -> Result<(), GifDecoderErrors> {
         self.decode_headers()?;
 
         let output_size = self
             .output_buf_size()
             .ok_or(GifDecoderErrors::OverflowError(
-                "cannot calculate output dimensions"
+                "cannot calculate output dimensions",
             ))?;
 
         if output_size > output.len() {

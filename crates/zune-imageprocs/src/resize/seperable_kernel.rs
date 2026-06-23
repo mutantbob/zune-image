@@ -12,26 +12,26 @@ fn get_kernel_fn_and_radius(method: ResizeMethod) -> (fn(f32) -> f32, i32) {
         ResizeMethod::BSpline => (|x| bicubic_kernel(x, 1.0, 0.0), 2),
         ResizeMethod::Hermite => (|x| bicubic_kernel(x, 0.0, 0.0), 2),
         ResizeMethod::Sinc => (sinc_kernel::<3>, 3),
-        ResizeMethod::Bilinear => (bilinear_kernel, 1)
+        ResizeMethod::Bilinear => (bilinear_kernel, 1),
     }
 }
 
 pub(crate) struct PrecomputedKernels {
     pub horizontal: Option<Vec<ConvKernel>>,
-    pub vertical:   Option<Vec<ConvKernel>>
+    pub vertical: Option<Vec<ConvKernel>>,
 }
 
 impl PrecomputedKernels {
     pub fn new(
         in_width: usize, in_height: usize, out_width: usize, out_height: usize,
-        method: ResizeMethod
+        method: ResizeMethod,
     ) -> Self {
         let (kernel_fn, radius) = get_kernel_fn_and_radius(method);
 
         let horizontal = if in_width != out_width {
             let x_ratio = in_width as f32 / out_width as f32;
             Some(precompute_kernels(
-                in_width, out_width, x_ratio, radius, kernel_fn
+                in_width, out_width, x_ratio, radius, kernel_fn,
             ))
         } else {
             None
@@ -40,7 +40,7 @@ impl PrecomputedKernels {
         let vertical = if in_height != out_height {
             let y_ratio = in_height as f32 / out_height as f32;
             Some(precompute_kernels(
-                in_height, out_height, y_ratio, radius, kernel_fn
+                in_height, out_height, y_ratio, radius, kernel_fn,
             ))
         } else {
             None
@@ -48,17 +48,17 @@ impl PrecomputedKernels {
 
         PrecomputedKernels {
             horizontal,
-            vertical
+            vertical,
         }
     }
 }
 
 pub fn resample_separable<T>(
     in_channel: &[T], out_channel: &mut [T], in_width: usize, in_height: usize, out_width: usize,
-    out_height: usize, kernels: &PrecomputedKernels
+    out_height: usize, kernels: &PrecomputedKernels,
 ) where
     T: Copy + NumOps<T>,
-    f32: std::convert::From<T>
+    f32: std::convert::From<T>,
 {
     resample_separable_precomputed(
         in_channel,
@@ -67,16 +67,16 @@ pub fn resample_separable<T>(
         in_height,
         out_width,
         out_height,
-        kernels
+        kernels,
     )
 }
 
 pub fn resample_separable_precomputed<T>(
     in_channel: &[T], out_channel: &mut [T], in_width: usize, in_height: usize, out_width: usize,
-    out_height: usize, kernels: &PrecomputedKernels
+    out_height: usize, kernels: &PrecomputedKernels,
 ) where
     T: Copy + NumOps<T>,
-    f32: std::convert::From<T>
+    f32: std::convert::From<T>,
 {
     // Early exit: if no resizing needed, just copy
     if in_width == out_width && in_height == out_height {
@@ -96,7 +96,7 @@ pub fn resample_separable_precomputed<T>(
             in_width,
             in_height,
             out_height,
-            kernels.vertical.as_ref().unwrap()
+            kernels.vertical.as_ref().unwrap(),
         );
         return;
     }
@@ -108,7 +108,7 @@ pub fn resample_separable_precomputed<T>(
             out_channel,
             in_width,
             out_width,
-            kernels.horizontal.as_ref().unwrap()
+            kernels.horizontal.as_ref().unwrap(),
         );
         return;
     }
@@ -202,7 +202,7 @@ pub fn resample_separable_precomputed<T>(
                     .iter()
                     .zip(weights.iter())
                     .map(|(&pixel, &weight)| f32::from(pixel) * weight)
-                    .sum::<f32>()
+                    .sum::<f32>(),
             };
 
             *out_pixel = sum;
@@ -230,10 +230,10 @@ pub fn resample_separable_precomputed<T>(
 
 fn resample_vertical_only_precomputed<T>(
     in_channel: &[T], out_channel: &mut [T], width: usize, _in_height: usize, out_height: usize,
-    v_kernels: &[ConvKernel]
+    v_kernels: &[ConvKernel],
 ) where
     T: Copy + NumOps<T>,
-    f32: std::convert::From<T>
+    f32: std::convert::From<T>,
 {
     for out_y in 0..out_height {
         let kernel = &v_kernels[out_y];
@@ -256,10 +256,10 @@ fn resample_vertical_only_precomputed<T>(
 
 fn resample_horizontal_only_precomputed<T>(
     in_channel: &[T], out_channel: &mut [T], in_width: usize, out_width: usize,
-    h_kernels: &[ConvKernel]
+    h_kernels: &[ConvKernel],
 ) where
     T: Copy + NumOps<T>,
-    f32: std::convert::From<T>
+    f32: std::convert::From<T>,
 {
     for (in_row, out_row) in in_channel
         .chunks_exact(in_width)
@@ -343,9 +343,8 @@ fn resample_horizontal_only_precomputed<T>(
                     .iter()
                     .zip(weights.iter())
                     .map(|(&pixel, &weight)| f32::from(pixel) * weight)
-                    .sum::<f32>()
+                    .sum::<f32>(),
             };
-
 
             *out_pixel = T::from_f32(sum);
         }
@@ -357,13 +356,13 @@ const MAX_KERNEL_SIZE: usize = 6;
 
 #[derive(Clone, Copy)]
 pub(crate) struct ConvKernel {
-    weights:   [f32; MAX_KERNEL_SIZE],
+    weights: [f32; MAX_KERNEL_SIZE],
     start_idx: u32,
-    end_idx:   u32
+    end_idx: u32,
 }
 
 fn precompute_kernels(
-    in_size: usize, out_size: usize, ratio: f32, a: i32, kernel_fn: fn(f32) -> f32
+    in_size: usize, out_size: usize, ratio: f32, a: i32, kernel_fn: fn(f32) -> f32,
 ) -> Vec<ConvKernel> {
     let max_size: usize = (2 * a) as usize;
     assert!(max_size <= MAX_KERNEL_SIZE, "Kernel size exceeds maximum");
@@ -403,7 +402,7 @@ fn precompute_kernels(
         kernels.push(ConvKernel {
             weights,
             start_idx: start_idx as u32,
-            end_idx: end_idx as u32
+            end_idx: end_idx as u32,
         });
     }
 
@@ -498,7 +497,7 @@ fn bilinear_kernel(x: f32) -> f32 {
 
 #[cfg(test)]
 mod tests {
-    use crate::resize::seperable_kernel::{ PrecomputedKernels};
+    use crate::resize::seperable_kernel::PrecomputedKernels;
     use crate::resize::ResizeMethod;
 
     #[test]

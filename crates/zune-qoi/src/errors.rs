@@ -39,7 +39,7 @@ pub enum QoiErrors {
     GenericStatic(&'static str),
     /// To small output size
     TooSmallOutput(usize, usize),
-    IoErrors(ZByteIoError)
+    IoErrors(ZByteIoError),
 }
 
 impl Debug for QoiErrors {
@@ -110,7 +110,7 @@ pub enum QoiEncodeErrors {
 
     Generic(&'static str),
 
-    IoError(ZByteIoError)
+    IoError(ZByteIoError),
 }
 
 impl Debug for QoiEncodeErrors {

@@ -4,7 +4,7 @@ use zune_core::bytestream::ZByteIoError;
 
 pub enum FarbFeldErrors {
     Generic(&'static str),
-    IoError(ZByteIoError)
+    IoError(ZByteIoError),
 }
 
 impl Debug for FarbFeldErrors {

@@ -100,7 +100,7 @@ impl Add for Image {
                         .for_each(|(x, y)| *x += *y);
                 }
             }
-            d => unimplemented!("Unimplemented for {:?}", d)
+            d => unimplemented!("Unimplemented for {:?}", d),
         }
         new_img
     }
@@ -160,7 +160,7 @@ impl Sub for Image {
                         .for_each(|(x, y)| *x -= *y);
                 }
             }
-            d => unimplemented!("Unimplemented for {:?}", d)
+            d => unimplemented!("Unimplemented for {:?}", d),
         }
         new_img
     }

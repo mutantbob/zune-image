@@ -33,7 +33,7 @@ use crate::transpose;
 /// This operation is multithreaded capable
 #[derive(Default)]
 pub struct BoxBlur {
-    radius: usize
+    radius: usize,
 }
 
 impl BoxBlur {
@@ -84,7 +84,7 @@ impl OperationsTrait for BoxBlur {
                             box_blur_f32(data, &mut scratch_space, width, height, self.radius);
                             Ok(())
                         }
-                        d => return Err(ImageErrors::ImageOperationNotImplemented("box_blur", d))
+                        d => return Err(ImageErrors::ImageOperationNotImplemented("box_blur", d)),
                     });
                     errors.push(result);
                 }
@@ -124,7 +124,7 @@ impl OperationsTrait for BoxBlur {
                         box_blur_f32(data, &mut scratch_space, width, height, self.radius);
                     }
                 }
-                d => return Err(ImageErrors::ImageOperationNotImplemented("box_blur", d))
+                d => return Err(ImageErrors::ImageOperationNotImplemented("box_blur", d)),
             }
         }
 
@@ -137,7 +137,7 @@ impl OperationsTrait for BoxBlur {
 
 pub fn box_blur_u16(
     in_out_image: &mut [u16], scratch_space: &mut [u16], width: usize, height: usize,
-    mut radius: usize
+    mut radius: usize,
 ) {
     if width == 0 || radius <= 1 {
         warn!("Box blur with radius less than or equal to 1 does nothing");
@@ -154,7 +154,7 @@ pub fn box_blur_u16(
 
 pub fn box_blur_u8(
     in_out_image: &mut [u8], scratch_space: &mut [u8], width: usize, height: usize,
-    mut radius: usize
+    mut radius: usize,
 ) {
     if width == 0 || radius <= 1 {
         warn!("Box blur with radius less than or equal to 1 does nothing");
@@ -172,7 +172,7 @@ pub fn box_blur_u8(
 
 pub fn box_blur_f32(
     in_out_image: &mut [f32], scratch_space: &mut [f32], width: usize, height: usize,
-    mut radius: usize
+    mut radius: usize,
 ) {
     if width == 0 || radius <= 1 {
         warn!("Box blur with radius less than or equal to 1 does nothing");
@@ -191,7 +191,7 @@ pub fn box_blur_f32(
 pub(crate) fn box_blur_inner<T>(in_image: &[T], out_image: &mut [T], width: usize, radius: usize)
 where
     T: Copy + NumOps<T>,
-    u32: std::convert::From<T>
+    u32: std::convert::From<T>,
 {
     let diameter = (radius * 2) + 1;
     // 1D-Box blurs can be seen as the average of radius pixels iterating
@@ -301,7 +301,7 @@ where
     clippy::cast_precision_loss
 )]
 pub(crate) fn box_blur_f32_inner(
-    in_image: &[f32], out_image: &mut [f32], width: usize, radius: usize
+    in_image: &[f32], out_image: &mut [f32], width: usize, radius: usize,
 ) {
     let diameter = (radius * 2) + 1;
 

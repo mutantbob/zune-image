@@ -67,21 +67,21 @@ impl OperationsTrait for Scharr {
                         channel.reinterpret_as()?,
                         out_channel.reinterpret_as_mut()?,
                         width,
-                        height
+                        height,
                     ),
                     BitType::U16 => scharr_int::<u16>(
                         channel.reinterpret_as()?,
                         out_channel.reinterpret_as_mut()?,
                         width,
-                        height
+                        height,
                     ),
                     BitType::F32 => scharr_float::<f32>(
                         channel.reinterpret_as()?,
                         out_channel.reinterpret_as_mut()?,
                         width,
-                        height
+                        height,
                     ),
-                    d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d))
+                    d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d)),
                 }
                 *channel = out_channel;
             }
@@ -98,24 +98,24 @@ impl OperationsTrait for Scharr {
                                 channel.reinterpret_as()?,
                                 out_channel.reinterpret_as_mut()?,
                                 width,
-                                height
+                                height,
                             ),
                             BitType::U16 => scharr_int::<u16>(
                                 channel.reinterpret_as()?,
                                 out_channel.reinterpret_as_mut()?,
                                 width,
-                                height
+                                height,
                             ),
                             BitType::F32 => scharr_float::<f32>(
                                 channel.reinterpret_as()?,
                                 out_channel.reinterpret_as_mut()?,
                                 width,
-                                height
+                                height,
                             ),
                             d => {
                                 return Err(ImageErrors::ImageOperationNotImplemented(
                                     self.name(),
-                                    d
+                                    d,
                                 ))
                             }
                         }
@@ -218,7 +218,7 @@ fn scharr_inner_i32<T>(c: &[T; 9]) -> T
 pub fn scharr_float<T>(in_channel: &[T], out_channel: &mut [T], width: usize, height: usize)
 where
     T: Default + NumOps<T> + Copy,
-    f32: std::convert::From<T>
+    f32: std::convert::From<T>,
 {
     //pad here
     let padded_input = pad(in_channel, width, height, 1, 1, PadMethod::Replicate);
@@ -238,7 +238,7 @@ where
 pub fn scharr_int<T>(in_channel: &[T], out_channel: &mut [T], width: usize, height: usize)
 where
     T: Default + NumOps<T> + Copy,
-    i32: std::convert::From<T>
+    i32: std::convert::From<T>,
 {
     //pad here
     let padded_input = pad(in_channel, width, height, 1, 1, PadMethod::Replicate);

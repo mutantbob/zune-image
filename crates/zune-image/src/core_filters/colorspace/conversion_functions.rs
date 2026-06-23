@@ -4,7 +4,7 @@ use zune_core::log::warn;
 
 use crate::channel::Channel;
 use crate::core_filters::colorspace::grayscale::{
-    rgb_to_grayscale_f32, rgb_to_grayscale_u16, rgb_to_grayscale_u8
+    rgb_to_grayscale_f32, rgb_to_grayscale_u16, rgb_to_grayscale_u8,
 };
 use crate::core_filters::colorspace::rgb_to_cmyk;
 use crate::core_filters::colorspace::rgb_to_hsl::{hsl_to_rgb, rgb_to_hsl};
@@ -35,7 +35,7 @@ pub fn convert_adding_opaque_alpha(image: &mut Image) -> Result<(), ImageErrors>
         }
         _ => {
             return Err(ImageErrors::GenericStr(
-                "Unsupported bit depth for RGB->RGBA conversion"
+                "Unsupported bit depth for RGB->RGBA conversion",
             ))
         }
     };
@@ -54,7 +54,7 @@ pub fn convert_adding_opaque_alpha(image: &mut Image) -> Result<(), ImageErrors>
 }
 
 pub fn convert_rgb_to_grayscale(
-    image: &mut Image, to: ColorSpace, preserve_alpha: bool
+    image: &mut Image, to: ColorSpace, preserve_alpha: bool,
 ) -> Result<(), ImageErrors> {
     let im_colorspace = image.colorspace();
 
@@ -87,7 +87,7 @@ pub fn convert_rgb_to_grayscale(
                     g,
                     b,
                     out.reinterpret_as_mut::<u8>().unwrap(),
-                    max_value as u8
+                    max_value as u8,
                 );
 
                 if preserve_alpha && colorspace.has_alpha() {
@@ -140,7 +140,7 @@ pub fn convert_rgb_to_grayscale(
                     g,
                     b,
                     out.reinterpret_as_mut::<f32>().unwrap(),
-                    max_value as f32
+                    max_value as f32,
                 );
 
                 if preserve_alpha && colorspace.has_alpha() {
@@ -157,7 +157,7 @@ pub fn convert_rgb_to_grayscale(
                     out_colorspace = ColorSpace::Luma;
                 }
             }
-            d => return Err(ImageErrors::ImageOperationNotImplemented("colorspace", d))
+            d => return Err(ImageErrors::ImageOperationNotImplemented("colorspace", d)),
         }
     }
 
@@ -167,7 +167,7 @@ pub fn convert_rgb_to_grayscale(
 }
 
 pub fn convert_rgb_bgr(
-    from: ColorSpace, to: ColorSpace, image: &mut Image
+    from: ColorSpace, to: ColorSpace, image: &mut Image,
 ) -> Result<(), ImageErrors> {
     for frame in image.frames_mut() {
         // swap B with R
@@ -210,7 +210,7 @@ pub fn convert_rgb_to_cmyk(image: &mut Image) -> Result<(), ImageErrors> {
                     r[0].reinterpret_as_mut()?,
                     g[0].reinterpret_as_mut()?,
                     b[0].reinterpret_as_mut()?,
-                    k.reinterpret_as_mut()?
+                    k.reinterpret_as_mut()?,
                 );
                 // add K
                 channels.push(k);
@@ -226,7 +226,7 @@ pub fn convert_rgb_to_cmyk(image: &mut Image) -> Result<(), ImageErrors> {
                     r[0].reinterpret_as_mut()?,
                     g[0].reinterpret_as_mut()?,
                     b[0].reinterpret_as_mut()?,
-                    k.reinterpret_as_mut()?
+                    k.reinterpret_as_mut()?,
                 );
                 // add K
                 channels.push(k);
@@ -241,12 +241,12 @@ pub fn convert_rgb_to_cmyk(image: &mut Image) -> Result<(), ImageErrors> {
                     r[0].reinterpret_as_mut()?,
                     g[0].reinterpret_as_mut()?,
                     b[0].reinterpret_as_mut()?,
-                    k.reinterpret_as_mut()?
+                    k.reinterpret_as_mut()?,
                 );
                 // add K
                 channels.push(k);
             }
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
     Ok(())
@@ -269,22 +269,22 @@ pub fn convert_cmyk_to_rgb(image: &mut Image, to: ColorSpace) -> Result<(), Imag
                     c[0].reinterpret_as_mut()?,
                     m[0].reinterpret_as_mut()?,
                     y[0].reinterpret_as_mut()?,
-                    k[0].reinterpret_as_mut()?
+                    k[0].reinterpret_as_mut()?,
                 );
             }
             BitDepth::Float32 => rgb_to_cmyk::cmyk_to_rgb_f32(
                 c[0].reinterpret_as_mut()?,
                 m[0].reinterpret_as_mut()?,
                 y[0].reinterpret_as_mut()?,
-                k[0].reinterpret_as_mut()?
+                k[0].reinterpret_as_mut()?,
             ),
             BitDepth::Sixteen => rgb_to_cmyk::cmyk_to_rgb_u16(
                 c[0].reinterpret_as_mut()?,
                 m[0].reinterpret_as_mut()?,
                 y[0].reinterpret_as_mut()?,
-                k[0].reinterpret_as_mut()?
+                k[0].reinterpret_as_mut()?,
             ),
-            _ => unreachable!()
+            _ => unreachable!(),
         }
 
         // remove K from cymk since the others become RGB
@@ -313,7 +313,7 @@ pub fn convert_rgb_to_hsl(image: &mut Image) -> Result<(), ImageErrors> {
         rgb_to_hsl(
             r[0].reinterpret_as_mut()?,
             g[0].reinterpret_as_mut()?,
-            b[0].reinterpret_as_mut()?
+            b[0].reinterpret_as_mut()?,
         );
     }
     // restore original bit depth
@@ -337,7 +337,7 @@ pub fn convert_hsl_to_rgb(image: &mut Image) -> Result<(), ImageErrors> {
         hsl_to_rgb(
             r[0].reinterpret_as_mut()?,
             g[0].reinterpret_as_mut()?,
-            b[0].reinterpret_as_mut()?
+            b[0].reinterpret_as_mut()?,
         )
     }
     // restore original bit depth
@@ -361,7 +361,7 @@ pub fn convert_rgb_to_hsv(image: &mut Image) -> Result<(), ImageErrors> {
         rgb_to_hsv(
             r[0].reinterpret_as_mut()?,
             g[0].reinterpret_as_mut()?,
-            b[0].reinterpret_as_mut()?
+            b[0].reinterpret_as_mut()?,
         );
     }
     // restore original bit depth
@@ -385,7 +385,7 @@ pub fn convert_hsv_to_rgb(image: &mut Image) -> Result<(), ImageErrors> {
         hsv_to_rgb(
             r[0].reinterpret_as_mut()?,
             g[0].reinterpret_as_mut()?,
-            b[0].reinterpret_as_mut()?
+            b[0].reinterpret_as_mut()?,
         )
     }
     // restore original bit depth
@@ -425,7 +425,7 @@ pub fn convert_rgba_to_argb_or_vice_versa(image: &mut Image) -> Result<(), Image
 }
 
 pub fn convert_luma_to_rgb(
-    image: &mut Image, out_colorspace: ColorSpace
+    image: &mut Image, out_colorspace: ColorSpace,
 ) -> Result<(), ImageErrors> {
     let color = image.colorspace();
     for frame in image.frames_mut() {

@@ -48,9 +48,9 @@ pub(crate) unsafe fn convert_rgb_to_grayscale_u8_avx2(r: &[u8], g: &[u8], b: &[u
         let mut g_out = _mm256_add_epi16(
             _mm256_add_epi16(
                 _mm256_mulhrs_epi16(r_c, r_coef),
-                _mm256_mulhrs_epi16(g_c, g_coef)
+                _mm256_mulhrs_epi16(g_c, g_coef),
             ),
-            _mm256_mulhrs_epi16(b_c, b_coef)
+            _mm256_mulhrs_epi16(b_c, b_coef),
         );
 
         // Undo the multiplication
@@ -69,7 +69,7 @@ pub(crate) unsafe fn convert_rgb_to_grayscale_u8_avx2(r: &[u8], g: &[u8], b: &[u
         // Write out
         _mm_storeu_si128(
             out.as_mut_ptr().cast(),
-            _mm256_extracti128_si256::<0>(g_out)
+            _mm256_extracti128_si256::<0>(g_out),
         );
     }
     // remainders

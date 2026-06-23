@@ -25,7 +25,7 @@ use crate::deinterleave::scalar::de_interleave_three_channels_scalar;
 /// ```
 #[target_feature(enable = "sse2")]
 pub(crate) unsafe fn de_interleave_three_channels_sse2(
-    source: &[u8], c1: &mut [u8], c2: &mut [u8], c3: &mut [u8]
+    source: &[u8], c1: &mut [u8], c2: &mut [u8], c3: &mut [u8],
 ) {
     const CHUNK_SIZE: usize = 96;
     const OUT_CHUNK_SIZE: usize = CHUNK_SIZE / 3;

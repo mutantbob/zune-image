@@ -47,7 +47,7 @@ use crate::utils::zil_malloc;
 #[no_mangle]
 pub extern "C" fn zil_imread(
     file: *const c_char, width: *mut usize, height: *mut usize, depth: *mut ZImageDepth,
-    channels: *mut usize, status: *mut ZStatus
+    channels: *mut usize, status: *mut ZStatus,
 ) -> *const c_char {
     // safety: The caller is supposed to uphold this
     let binding = unsafe { CStr::from_ptr(file) }.to_string_lossy();
@@ -68,7 +68,7 @@ pub extern "C" fn zil_imread(
                     unsafe {
                         *status = ZStatus::new(
                             format!("Malloc failed to allocate buffer with size of {}", new_size),
-                            ZStatusType::ZilMallocFailed
+                            ZStatusType::ZilMallocFailed,
                         )
                     };
                     return ptr::null();
@@ -82,7 +82,7 @@ pub extern "C" fn zil_imread(
                     height,
                     depth,
                     channels,
-                    status
+                    status,
                 );
                 if zil_status_ok(status) {
                     return output.cast();
@@ -127,7 +127,7 @@ pub extern "C" fn zil_imread(
 #[no_mangle]
 pub extern "C" fn zil_imread_into(
     file: *const c_char, output: *mut u8, output_size: usize, width: *mut usize,
-    height: *mut usize, depth: *mut ZImageDepth, channels: *mut usize, status: *mut ZStatus
+    height: *mut usize, depth: *mut ZImageDepth, channels: *mut usize, status: *mut ZStatus,
 ) {
     if status.is_null() {
         return;
@@ -146,7 +146,7 @@ pub extern "C" fn zil_imread_into(
             height,
             depth,
             channels,
-            status
+            status,
         ),
         Err(err) => {
             unsafe { *status = ZStatus::new(err.to_string(), ZStatusType::ZilIoErrors) };
@@ -159,7 +159,7 @@ pub extern "C" fn zil_imread_into(
 /// \param file: Null terminated
 #[no_mangle]
 pub extern "C" fn zil_read_headers_from_file(
-    file: *const c_char, status: *mut ZStatus
+    file: *const c_char, status: *mut ZStatus,
 ) -> ZImageMetadata {
     if status.is_null() {
         return ZImageMetadata::default();
@@ -188,7 +188,7 @@ pub extern "C" fn zil_read_headers_from_file(
 ///
 #[no_mangle]
 pub extern "C" fn zil_read_headers_from_memory(
-    input: *const u8, input_size: usize, status: *mut ZStatus
+    input: *const u8, input_size: usize, status: *mut ZStatus,
 ) -> ZImageMetadata {
     if status.is_null() {
         return ZImageMetadata::default();
@@ -196,7 +196,7 @@ pub extern "C" fn zil_read_headers_from_memory(
     unsafe {
         (*status) = ZStatus::new(
             "Could not decode headers, unknown error",
-            ZStatusType::ZilDecodeErrors
+            ZStatusType::ZilDecodeErrors,
         );
     };
     let contents = unsafe { std::slice::from_raw_parts(input, input_size) };
@@ -209,13 +209,11 @@ pub extern "C" fn zil_read_headers_from_memory(
             unsafe { (*status) = ZStatus::okay() };
 
             ZImageMetadata {
-                width:      w as u32,
-                height:     h as u32,
-                depth:      ZImageDepth::from(metadata.depth()),
+                width: w as u32,
+                height: h as u32,
+                depth: ZImageDepth::from(metadata.depth()),
                 colorspace: ZImageColorspace::from(metadata.colorspace()),
-                format:     ZImageFormat::from(
-                    metadata.image_format().unwrap_or(ImageFormat::Unknown)
-                )
+                format: ZImageFormat::from(metadata.image_format().unwrap_or(ImageFormat::Unknown)),
             }
         }
     }
@@ -237,7 +235,7 @@ pub extern "C" fn zil_read_headers_from_memory(
 #[no_mangle]
 pub extern "C" fn zil_imdecode(
     input: *const u8, input_size: usize, width: *mut usize, height: *mut usize,
-    depth: *mut ZImageDepth, channels: *mut usize, status: *mut ZStatus
+    depth: *mut ZImageDepth, channels: *mut usize, status: *mut ZStatus,
 ) -> *const c_char {
     if status.is_null() {
         return ptr::null();
@@ -262,7 +260,7 @@ pub extern "C" fn zil_imdecode(
                 unsafe {
                     *status = ZStatus::new(
                         format!("Malloc failed to allocate buffer with size of {}", size),
-                        ZStatusType::ZilMallocFailed
+                        ZStatusType::ZilMallocFailed,
                     )
                 };
                 return ptr::null();
@@ -276,7 +274,7 @@ pub extern "C" fn zil_imdecode(
                 height,
                 depth,
                 channels,
-                status
+                status,
             );
 
             if zil_status_ok(status) {
@@ -304,7 +302,7 @@ pub extern "C" fn zil_imdecode(
 #[no_mangle]
 pub extern "C" fn zil_imdecode_into(
     input: *const u8, input_size: usize, output: *mut u8, output_size: usize, width: *mut usize,
-    height: *mut usize, depth: *mut ZImageDepth, channels: *mut usize, status: *mut ZStatus
+    height: *mut usize, depth: *mut ZImageDepth, channels: *mut usize, status: *mut ZStatus,
 ) {
     if status.is_null() {
         return;
@@ -360,7 +358,7 @@ pub extern "C" fn zil_imdecode_into(
 
 fn imdecode_inner<T>(data: T, output: &mut [u8]) -> Result<(), ImageErrors>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     if let Some((im_format, data)) = zune_image::codecs::guess_format(data) {
         match im_format {
@@ -408,7 +406,7 @@ where
 
                         decoder.decode_into(output)?;
                     }
-                    _ => unreachable!()
+                    _ => unreachable!(),
                 }
             }
             ImageFormat::PPM => {
@@ -441,7 +439,7 @@ where
                         let (_, b, _) = unsafe { bytes.align_to::<u8>() };
                         output[..size].copy_from_slice(&b[..size]);
                     }
-                    _ => unreachable!()
+                    _ => unreachable!(),
                 }
             }
             ImageFormat::PSD => {
@@ -474,7 +472,7 @@ where
                         let (_, b, _) = unsafe { bytes.align_to::<u8>() };
                         output[..size].copy_from_slice(&b[..size]);
                     }
-                    _ => unreachable!()
+                    _ => unreachable!(),
                 }
             }
             ImageFormat::Farbfeld => {
@@ -517,7 +515,7 @@ where
 
                 if buf_len > f32_buf.len() {
                     return Err(ImageErrors::GenericStr(
-                        "Too small of a buffer for jxl output"
+                        "Too small of a buffer for jxl output",
                     ));
                 }
                 f32_buf[..buf_len].copy_from_slice(im_plannar.buf())

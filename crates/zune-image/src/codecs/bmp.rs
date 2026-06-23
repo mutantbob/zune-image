@@ -24,7 +24,7 @@ use crate::traits::{DecodeInto, DecoderTrait};
 
 impl<T> DecoderTrait for BmpDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     fn decode(&mut self) -> Result<Image, ImageErrors> {
         let pixels = self.decode()?;
@@ -74,7 +74,7 @@ impl From<BmpDecoderErrors> for ImageErrors {
 
 impl<T> DecodeInto for BmpDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     type BufferType = u8;
 

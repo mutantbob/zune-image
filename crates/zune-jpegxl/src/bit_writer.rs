@@ -19,9 +19,9 @@ use zune_core::bytestream::{ZByteIoError, ZByteWriterTrait, ZWriter};
 #[derive(Clone, Debug)]
 pub struct BitWriter {
     pub bits_in_buffer: u8,
-    pub buffer:         u64,
-    pub position:       usize,
-    pub dest:           Vec<u8>
+    pub buffer: u64,
+    pub position: usize,
+    pub dest: Vec<u8>,
 }
 
 impl BitWriter {
@@ -47,9 +47,9 @@ impl BitWriter {
     pub fn new() -> BitWriter {
         BitWriter {
             bits_in_buffer: 0,
-            buffer:         0,
-            position:       0,
-            dest:           vec![]
+            buffer: 0,
+            position: 0,
+            dest: vec![],
         }
     }
 
@@ -103,9 +103,9 @@ impl BitWriter {
 /// array to write bits into
 pub struct BorrowingBitWriter<'a, T: ZByteWriterTrait> {
     pub bits_in_buffer: u8,
-    pub buffer:         u64,
-    pub position:       usize,
-    pub dest:           &'a mut ZWriter<T>
+    pub buffer: u64,
+    pub position: usize,
+    pub dest: &'a mut ZWriter<T>,
 }
 
 impl<'a, T: ZByteWriterTrait> BorrowingBitWriter<'a, T> {
@@ -133,9 +133,9 @@ impl<'a, T: ZByteWriterTrait> BorrowingBitWriter<'a, T> {
     pub fn new(data: &'a mut ZWriter<T>) -> BorrowingBitWriter<'a, T> {
         BorrowingBitWriter {
             bits_in_buffer: 0,
-            buffer:         0,
-            position:       0,
-            dest:           data
+            buffer: 0,
+            position: 0,
+            dest: data,
         }
     }
 

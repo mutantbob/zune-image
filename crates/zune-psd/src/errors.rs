@@ -24,7 +24,7 @@ pub enum PSDDecodeErrors {
     UnknownCompression,
     Generic(&'static str),
     IoErrors(ZByteIoError),
-    BadRLE
+    BadRLE,
 }
 
 impl Debug for PSDDecodeErrors {

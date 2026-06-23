@@ -13,9 +13,9 @@ use serde::{Serialize, Serializer};
 use zune_image::metadata::ImageMetadata;
 
 pub struct Metadata<'a> {
-    file:     OsString,
-    size:     u64,
-    metadata: &'a ImageMetadata
+    file: OsString,
+    size: u64,
+    metadata: &'a ImageMetadata,
 }
 
 impl<'a> Metadata<'a> {
@@ -23,7 +23,7 @@ impl<'a> Metadata<'a> {
         Metadata {
             file,
             size,
-            metadata
+            metadata,
         }
     }
 }
@@ -31,7 +31,7 @@ impl<'a> Metadata<'a> {
 impl<'a> Serialize for Metadata<'a> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: Serializer
+        S: Serializer,
     {
         let mut state = serializer.serialize_struct("ImageMetadata", 2)?;
 

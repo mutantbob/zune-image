@@ -89,7 +89,7 @@ fn print_initial_stats() {
 #[wasm_bindgen]
 #[derive(Clone)]
 pub struct WasmImage {
-    image: Image
+    image: Image,
 }
 
 impl Deref for WasmImage {
@@ -274,7 +274,7 @@ impl WasmImage {
     /// @param operations - The operation being ran on the image, currently only a set of pre-configured operations can
     /// be ran
     pub fn spatial(
-        &mut self, radius: usize, operations: WasmSpatialOperations
+        &mut self, radius: usize, operations: WasmSpatialOperations,
     ) -> Result<(), JsError> {
         self.execute_ops(&SpatialOps::new(radius, operations.into()))
     }
@@ -314,7 +314,7 @@ impl WasmImage {
     ///   long as their colors are close enough (see sigma_color ).
     ///   When d>0, it specifies the neighborhood size regardless of sigma_space. Otherwise, d is proportional to sigma_space.
     pub fn bilateral_filter(
-        &mut self, d: i32, sigma_color: f32, sigma_space: f32
+        &mut self, d: i32, sigma_color: f32, sigma_space: f32,
     ) -> Result<(), JsError> {
         self.execute_ops(&BilateralFilter::new(d, sigma_color, sigma_space))
     }
@@ -461,7 +461,7 @@ impl WasmImage {
     pub fn color_matrix(&mut self, matrix: &[f32]) -> Result<(), JsError> {
         match ColorMatrix::try_from_slice(matrix) {
             None => Err(JsError::new("Length of matrix is not 20")),
-            Some(r) => self.execute_ops(&r)
+            Some(r) => self.execute_ops(&r),
         }
     }
 

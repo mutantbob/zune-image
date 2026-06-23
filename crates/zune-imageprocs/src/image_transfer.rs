@@ -13,17 +13,17 @@ use crate::utils::execute_on;
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum ConversionType {
     GammaToLinear,
-    LinearToGamma
+    LinearToGamma,
 }
 pub struct ImageTransfer {
     transfer_function: TransferFunction,
-    conversion_type:   ConversionType
+    conversion_type: ConversionType,
 }
 impl ImageTransfer {
     pub fn new(transfer_function: TransferFunction, conversion_type: ConversionType) -> Self {
         ImageTransfer {
             transfer_function,
-            conversion_type
+            conversion_type,
         }
     }
 }
@@ -51,11 +51,11 @@ impl OperationsTrait for ImageTransfer {
         let eight_bit_lut = if image.depth().bit_type() == BitType::U8 {
             match self.conversion_type {
                 ConversionType::GammaToLinear => Some(build_8_bit_gamma_to_linear_lut_table(
-                    self.transfer_function
+                    self.transfer_function,
                 )),
                 ConversionType::LinearToGamma => Some(build_8_bit_linear_to_gamma_lut_table(
-                    self.transfer_function
-                ))
+                    self.transfer_function,
+                )),
             }
         } else {
             None
@@ -63,11 +63,11 @@ impl OperationsTrait for ImageTransfer {
         let sixteen_bit_lut = if image.depth().bit_type() == BitType::U16 {
             match self.conversion_type {
                 ConversionType::GammaToLinear => Some(build_sixteen_bit_gamma_to_linear_lut_table(
-                    self.transfer_function
+                    self.transfer_function,
                 )),
                 ConversionType::LinearToGamma => Some(build_sixteen_bit_linear_to_gamma_lut_table(
-                    self.transfer_function
-                ))
+                    self.transfer_function,
+                )),
             }
         } else {
             None
@@ -106,7 +106,7 @@ impl OperationsTrait for ImageTransfer {
                         }
                     }
                 }
-                d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d))
+                d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d)),
             }
             Ok(())
         };
@@ -115,7 +115,7 @@ impl OperationsTrait for ImageTransfer {
 
         match self.conversion_type {
             ConversionType::GammaToLinear => image.metadata_mut().set_linear(true),
-            ConversionType::LinearToGamma => image.metadata_mut().set_linear(false)
+            ConversionType::LinearToGamma => image.metadata_mut().set_linear(false),
         }
 
         Ok(())

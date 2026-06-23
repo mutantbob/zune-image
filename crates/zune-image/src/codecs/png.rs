@@ -21,7 +21,6 @@ use zune_core::result::DecodingResult;
 use zune_png::error::PngDecodeErrors;
 use zune_png::*;
 
-pub use zune_png::PngDecoder;
 use crate::codecs::{create_options_for_encoder, ImageFormat};
 use crate::errors::ImageErrors;
 use crate::errors::ImageErrors::ImageDecodeErrors;
@@ -30,10 +29,11 @@ use crate::frame::Frame;
 use crate::image::Image;
 use crate::metadata::ImageMetadata;
 use crate::traits::{DecodeInto, DecoderTrait, EncoderTrait};
+pub use zune_png::PngDecoder;
 
 impl<T> DecoderTrait for PngDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     fn decode(&mut self) -> Result<Image, ImageErrors> {
         let metadata = self.read_headers()?.unwrap();
@@ -92,7 +92,7 @@ where
             let mut image = match pixels {
                 DecodingResult::U8(data) => Image::from_u8(&data, width, height, colorspace),
                 DecodingResult::U16(data) => Image::from_u16(&data, width, height, colorspace),
-                _ => unreachable!()
+                _ => unreachable!(),
             };
             // metadata
             image.metadata = metadata;
@@ -155,7 +155,7 @@ impl From<zune_png::error::PngDecodeErrors> for ImageErrors {
 
 #[derive(Default)]
 pub struct PngEncoder {
-    options: Option<EncoderOptions>
+    options: Option<EncoderOptions>,
 }
 
 impl PngEncoder {
@@ -164,7 +164,7 @@ impl PngEncoder {
     }
     pub fn new_with_options(options: EncoderOptions) -> PngEncoder {
         PngEncoder {
-            options: Some(options)
+            options: Some(options),
         }
     }
 }
@@ -175,7 +175,7 @@ impl EncoderTrait for PngEncoder {
     }
 
     fn encode_inner<T: ZByteWriterTrait>(
-        &mut self, image: &Image, sink: T
+        &mut self, image: &Image, sink: T,
     ) -> Result<usize, ImageErrors> {
         let options = create_options_for_encoder(self.options, image);
 
@@ -216,7 +216,7 @@ impl EncoderTrait for PngEncoder {
             ColorSpace::Luma,
             ColorSpace::LumaA,
             ColorSpace::RGB,
-            ColorSpace::RGBA
+            ColorSpace::RGBA,
         ]
     }
 
@@ -231,7 +231,7 @@ impl EncoderTrait for PngEncoder {
     fn default_depth(&self, depth: BitDepth) -> BitDepth {
         match depth {
             BitDepth::Sixteen | BitDepth::Float32 => BitDepth::Sixteen,
-            _ => BitDepth::Eight
+            _ => BitDepth::Eight,
         }
     }
     fn set_options(&mut self, opts: EncoderOptions) {
@@ -241,7 +241,7 @@ impl EncoderTrait for PngEncoder {
 
 impl<T> DecodeInto for PngDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     type BufferType = u8;
 

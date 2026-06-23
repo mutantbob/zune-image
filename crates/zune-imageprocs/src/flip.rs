@@ -51,12 +51,12 @@ pub enum FlipDirection {
     /// │f g h i j│   │e d c b a │
     /// └─────────┘   └──────────┘
     /// ```
-    MirrorXAxis
+    MirrorXAxis,
 }
 
 /// Flip an image to a certain direction
 pub struct Flip {
-    flip_direction: FlipDirection
+    flip_direction: FlipDirection,
 }
 
 impl Flip {
@@ -88,7 +88,7 @@ impl OperationsTrait for Flip {
                     BitType::F32 => {
                         flop(inp.reinterpret_as_mut::<f32>()?, width);
                     }
-                    d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d))
+                    d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d)),
                 },
                 FlipDirection::Vertical => match depth.bit_type() {
                     BitType::U8 => {
@@ -100,7 +100,7 @@ impl OperationsTrait for Flip {
                     BitType::F32 => {
                         vertical_flip(inp.reinterpret_as_mut::<f32>()?, width);
                     }
-                    d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d))
+                    d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d)),
                 },
                 FlipDirection::MirrorXAxis => match depth.bit_type() {
                     BitType::U8 => {
@@ -112,8 +112,8 @@ impl OperationsTrait for Flip {
                     BitType::F32 => {
                         flip(inp.reinterpret_as_mut::<f32>()?);
                     }
-                    d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d))
-                }
+                    d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d)),
+                },
             }
 
             Ok(())

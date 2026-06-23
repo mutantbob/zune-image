@@ -230,14 +230,14 @@ pub fn iec61966_to_linear(gamma: f32) -> f32 {
     if gamma < -4.5 * 0.018053968510807 {
         f32::powf(
             (-gamma + 0.09929682680944f32) / -1.09929682680944f32,
-            1.0f32 / 0.45f32
+            1.0f32 / 0.45f32,
         )
     } else if gamma < 4.5f32 * 0.018053968510807f32 {
         gamma / 4.5f32
     } else {
         f32::powf(
             (gamma + 0.09929682680944f32) / 1.09929682680944f32,
-            1.0f32 / 0.45f32
+            1.0f32 / 0.45f32,
         )
     }
 }
@@ -281,7 +281,7 @@ pub enum TransferFunction {
     /// IEC 61966 Transfer function
     Iec61966,
     /// Linear transfer function
-    Linear
+    Linear,
 }
 
 impl From<u8> for TransferFunction {
@@ -299,7 +299,7 @@ impl From<u8> for TransferFunction {
             8 => TransferFunction::Smpte240,
             9 => TransferFunction::Linear,
             10 => TransferFunction::Iec61966,
-            _ => TransferFunction::Srgb
+            _ => TransferFunction::Srgb,
         }
     }
 }
@@ -317,7 +317,7 @@ impl From<ColorCharacteristics> for TransferFunction {
             ColorCharacteristics::Bt1361 => Self::Bt1361,
             ColorCharacteristics::Smpte240 => Self::Smpte240,
             ColorCharacteristics::Iec61966 => Self::Iec61966,
-            ColorCharacteristics::Linear => Self::Linear
+            ColorCharacteristics::Linear => Self::Linear,
         }
     }
 }
@@ -335,7 +335,7 @@ impl TransferFunction {
             TransferFunction::Bt1361 => bt1361_to_linear(v),
             TransferFunction::Smpte240 => smpte240_to_linear(v),
             TransferFunction::Linear => trc_linear(v),
-            TransferFunction::Iec61966 => iec61966_to_linear(v)
+            TransferFunction::Iec61966 => iec61966_to_linear(v),
         }
     }
 
@@ -352,7 +352,7 @@ impl TransferFunction {
             TransferFunction::Bt1361 => bt1361_from_linear(v),
             TransferFunction::Smpte240 => smpte240_from_linear(v),
             TransferFunction::Linear => trc_linear(v),
-            TransferFunction::Iec61966 => iec619662_from_linear(v)
+            TransferFunction::Iec61966 => iec619662_from_linear(v),
         }
     }
 }

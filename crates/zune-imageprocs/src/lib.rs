@@ -51,12 +51,15 @@
 
 pub use zune_image;
 
+pub mod affine;
 pub mod auto_orient;
 pub mod bilateral_filter;
 pub mod blend;
 pub mod box_blur;
 pub mod brighten;
+mod clahe;
 pub mod color_matrix;
+pub mod color_transform;
 pub mod composite;
 pub mod contrast;
 pub mod convolve;
@@ -65,9 +68,9 @@ pub mod exposure;
 pub mod flip;
 pub mod gamma;
 pub mod gaussian_blur;
-pub mod color_transform;
 pub mod histogram;
 pub mod hsv_adjust;
+mod image_transfer;
 pub mod invert;
 pub mod mathops;
 pub mod median;
@@ -87,6 +90,3 @@ pub mod traits;
 pub mod transpose;
 pub mod unsharpen;
 mod utils;
-mod image_transfer;
-pub mod affine;
-mod clahe;

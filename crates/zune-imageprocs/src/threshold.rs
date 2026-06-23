@@ -21,7 +21,7 @@ pub enum ThresholdMethod {
     Binary,
     BinaryInv,
     ThreshTrunc,
-    ThreshToZero
+    ThreshToZero,
 }
 
 impl ThresholdMethod {
@@ -51,8 +51,8 @@ impl ThresholdMethod {
 ///           
 ///  See [Wikipedia Article on Thresholding](https://en.wikipedia.org/wiki/Thresholding_(image_processing))
 pub struct Threshold {
-    method:    ThresholdMethod,
-    threshold: f32
+    method: ThresholdMethod,
+    threshold: f32,
 }
 
 impl Threshold {
@@ -90,19 +90,19 @@ impl OperationsTrait for Threshold {
                 BitType::U16 => threshold(
                     channel.reinterpret_as_mut::<u16>()?,
                     self.threshold.clamp(0., 65535.) as u16,
-                    self.method
+                    self.method,
                 ),
                 BitType::U8 => threshold(
                     channel.reinterpret_as_mut::<u8>()?,
                     self.threshold.clamp(0., 255.) as u8,
-                    self.method
+                    self.method,
                 ),
                 BitType::F32 => threshold(
                     channel.reinterpret_as_mut::<f32>()?,
                     self.threshold,
-                    self.method
+                    self.method,
                 ),
-                d => return Err(ImageErrors::ImageOperationNotImplemented("threshold", d))
+                d => return Err(ImageErrors::ImageOperationNotImplemented("threshold", d)),
             }
             Ok(())
         };

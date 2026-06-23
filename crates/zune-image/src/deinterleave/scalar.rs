@@ -8,7 +8,7 @@
 
 #[inline(always)]
 pub(crate) fn de_interleave_three_channels_scalar<T: Copy>(
-    source: &[T], c1: &mut [T], c2: &mut [T], c3: &mut [T]
+    source: &[T], c1: &mut [T], c2: &mut [T], c3: &mut [T],
 ) {
     for (((val, a), b), c) in source
         .chunks_exact(3)
@@ -24,7 +24,7 @@ pub(crate) fn de_interleave_three_channels_scalar<T: Copy>(
 
 #[inline]
 pub fn de_interleave_four_channels_scalar<T: Copy>(
-    source: &[T], c1: &mut [T], c2: &mut [T], c3: &mut [T], c4: &mut [T]
+    source: &[T], c1: &mut [T], c2: &mut [T], c3: &mut [T], c4: &mut [T],
 ) {
     for ((((src, c11), c22), c33), c44) in source
         .chunks_exact(4)

@@ -50,9 +50,9 @@ use crate::traits::NumOps;
 ///# Ok::<(),ImageErrors>(())
 /// ```
 pub struct HsvAdjust {
-    hue:        f32,
+    hue: f32,
     saturation: f32,
-    lightness:  f32
+    lightness: f32,
 }
 
 impl HsvAdjust {
@@ -73,7 +73,7 @@ impl HsvAdjust {
         HsvAdjust {
             hue,
             saturation,
-            lightness
+            lightness,
         }
     }
 }
@@ -106,7 +106,7 @@ impl OperationsTrait for HsvAdjust {
                         b[0].reinterpret_as_mut()?,
                         self.hue,
                         self.saturation,
-                        self.lightness
+                        self.lightness,
                     );
                 }
                 BitType::U16 => {
@@ -116,7 +116,7 @@ impl OperationsTrait for HsvAdjust {
                         b[0].reinterpret_as_mut()?,
                         self.hue,
                         self.saturation,
-                        self.lightness
+                        self.lightness,
                     );
                 }
                 BitType::F32 => {
@@ -126,10 +126,10 @@ impl OperationsTrait for HsvAdjust {
                         b[0].reinterpret_as_mut()?,
                         self.hue,
                         self.saturation,
-                        self.lightness
+                        self.lightness,
                     );
                 }
-                d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d))
+                d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d)),
             }
         }
         // convert to original color
@@ -147,7 +147,7 @@ impl OperationsTrait for HsvAdjust {
 fn modulate_hsl<T>(r: &mut [T], g: &mut [T], b: &mut [T], h: f32, s: f32, v: f32)
 where
     f32: From<T>,
-    T: NumOps<T> + Copy
+    T: NumOps<T> + Copy,
 {
     // from https://beesbuzz.biz/code/16-hsv-color-transforms
     // whoever you are, thank you for keeping up the site for 20 years :)

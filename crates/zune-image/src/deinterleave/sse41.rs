@@ -15,12 +15,12 @@ use std::arch::x86::*;
 use std::arch::x86_64::*;
 
 use crate::deinterleave::scalar::{
-    de_interleave_four_channels_scalar, de_interleave_three_channels_scalar
+    de_interleave_four_channels_scalar, de_interleave_three_channels_scalar,
 };
 
 #[target_feature(enable = "sse4.1")]
 pub unsafe fn de_interleave_three_channels_sse3_u8(
-    source: &[u8], c1: &mut [u8], c2: &mut [u8], c3: &mut [u8]
+    source: &[u8], c1: &mut [u8], c2: &mut [u8], c3: &mut [u8],
 ) {
     const CHUNK_SIZE: usize = 48;
     const OUT_CHUNK_SIZE: usize = CHUNK_SIZE / 3;
@@ -65,24 +65,24 @@ pub unsafe fn de_interleave_three_channels_sse3_u8(
         let red = _mm_or_si128(
             _mm_or_si128(
                 _mm_shuffle_epi8(chunk0, ssse3_red_indeces_0),
-                _mm_shuffle_epi8(chunk1, ssse3_red_indeces_1)
+                _mm_shuffle_epi8(chunk1, ssse3_red_indeces_1),
             ),
-            _mm_shuffle_epi8(chunk2, ssse3_red_indeces_2)
+            _mm_shuffle_epi8(chunk2, ssse3_red_indeces_2),
         );
         let green = _mm_or_si128(
             _mm_or_si128(
                 _mm_shuffle_epi8(chunk0, ssse3_green_indeces_0),
-                _mm_shuffle_epi8(chunk1, ssse3_green_indeces_1)
+                _mm_shuffle_epi8(chunk1, ssse3_green_indeces_1),
             ),
-            _mm_shuffle_epi8(chunk2, ssse3_green_indeces_2)
+            _mm_shuffle_epi8(chunk2, ssse3_green_indeces_2),
         );
 
         let blue = _mm_or_si128(
             _mm_or_si128(
                 _mm_shuffle_epi8(chunk0, ssse3_blue_indeces_0),
-                _mm_shuffle_epi8(chunk1, ssse3_blue_indeces_1)
+                _mm_shuffle_epi8(chunk1, ssse3_blue_indeces_1),
             ),
-            _mm_shuffle_epi8(chunk2, ssse3_blue_indeces_2)
+            _mm_shuffle_epi8(chunk2, ssse3_blue_indeces_2),
         );
 
         _mm_storeu_si128(a.as_mut_ptr().cast(), red);

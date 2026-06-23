@@ -26,7 +26,7 @@ use crate::traits::DecoderTrait;
 
 impl<T> DecoderTrait for PSDDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     fn decode(&mut self) -> Result<Image, ImageErrors> {
         let pixels = self.decode()?;
@@ -38,7 +38,7 @@ where
         let mut image = match pixels {
             DecodingResult::U8(data) => Image::from_u8(&data, width, height, colorspace),
             DecodingResult::U16(data) => Image::from_u16(&data, width, height, colorspace),
-            _ => unreachable!()
+            _ => unreachable!(),
         };
         // set metadata details
         image.metadata.format = Some(ImageFormat::PSD);

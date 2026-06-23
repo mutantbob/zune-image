@@ -30,13 +30,13 @@ use crate::metadata::ImageMetadata;
 use crate::traits::{DecodeInto, DecoderTrait, EncoderTrait};
 
 struct TempVt<'a, T: ZByteWriterTrait> {
-    inner: &'a mut ZWriter<T>
+    inner: &'a mut ZWriter<T>,
 }
 impl<'a, T: ZByteWriterTrait> JfifWrite for TempVt<'a, T> {
     fn write_all(&mut self, buf: &[u8]) -> Result<(), EncodingError> {
         self.inner.write_all(buf).map_err(|r| match r {
             ZByteIoError::StdIoError(e) => EncodingError::IoError(e),
-            r => EncodingError::Write(format!("{:?}", r))
+            r => EncodingError::Write(format!("{:?}", r)),
         })
     }
 }
@@ -112,7 +112,7 @@ impl From<zune_jpeg::errors::DecodeErrors> for ImageErrors {
 /// A simple JPEG encoder
 #[derive(Copy, Clone, Default)]
 pub struct JpegEncoder {
-    options: Option<EncoderOptions>
+    options: Option<EncoderOptions>,
 }
 
 impl JpegEncoder {
@@ -123,7 +123,7 @@ impl JpegEncoder {
     /// Create a new encoder with custom options
     pub fn new_with_options(options: EncoderOptions) -> JpegEncoder {
         JpegEncoder {
-            options: Some(options)
+            options: Some(options),
         }
     }
 }
@@ -134,7 +134,7 @@ impl EncoderTrait for JpegEncoder {
     }
 
     fn encode_inner<T: ZByteWriterTrait>(
-        &mut self, image: &Image, sink: T
+        &mut self, image: &Image, sink: T,
     ) -> Result<usize, ImageErrors> {
         assert_eq!(
             image.depth(),
@@ -203,7 +203,7 @@ impl EncoderTrait for JpegEncoder {
         } else {
             Err(ImgEncodeErrors::UnsupportedColorspace(
                 image.colorspace(),
-                self.supported_colorspaces()
+                self.supported_colorspaces(),
             )
             .into())
         }
@@ -218,7 +218,7 @@ impl EncoderTrait for JpegEncoder {
             ColorSpace::RGBA,
             ColorSpace::YCbCr,
             ColorSpace::YCCK,
-            ColorSpace::CMYK
+            ColorSpace::CMYK,
         ]
     }
 
@@ -248,7 +248,7 @@ const fn match_colorspace_to_colortype(colorspace: ColorSpace) -> Option<ColorTy
         ColorSpace::Luma => Some(ColorType::Luma),
         ColorSpace::YCCK => Some(ColorType::Ycck),
         ColorSpace::CMYK => Some(ColorType::Cmyk),
-        _ => None
+        _ => None,
     }
 }
 
@@ -260,7 +260,7 @@ impl From<EncodingError> for ImageErrors {
 
 impl<T> DecodeInto for JpegDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     type BufferType = u8;
 

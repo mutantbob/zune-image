@@ -25,7 +25,7 @@ use crate::channel::Channel;
 use crate::deinterleave::deinterleave_impls::{
     de_interleave_four_channels_f32, de_interleave_four_channels_u16,
     de_interleave_three_channels_f32, de_interleave_three_channels_u16,
-    de_interleave_three_channels_u8, deinterleave_four_channels_u8
+    de_interleave_three_channels_u8, deinterleave_four_channels_u8,
 };
 use crate::errors::{ImageErrors, ImageOperationsErrors};
 
@@ -38,18 +38,18 @@ mod deinterleave_impls;
 
 /// De-interleave generic channels
 fn deinterleave_generic<T: Default + Clone + Copy + 'static + Zeroable + Pod>(
-    interleaved_pixels: &[T], colorspace: ColorSpace
+    interleaved_pixels: &[T], colorspace: ColorSpace,
 ) -> Result<Vec<Channel>, ImageErrors> {
     if interleaved_pixels.len() % colorspace.num_components() != 0 {
         return Err(ImageErrors::OperationsError(
-            ImageOperationsErrors::InvalidChannelLayout("Extra pixels in the colorspace")
+            ImageOperationsErrors::InvalidChannelLayout("Extra pixels in the colorspace"),
         ));
     }
     let size = (interleaved_pixels.len() / colorspace.num_components()) * core::mem::size_of::<T>();
 
     if size == 0 {
         return Err(ImageErrors::GenericStr(
-            "Too Small of an interleaved pixel count"
+            "Too Small of an interleaved pixel count",
         ));
     }
     let mut channels = vec![Channel::new_with_length::<T>(size); colorspace.num_components()];
@@ -73,18 +73,18 @@ fn deinterleave_generic<T: Default + Clone + Copy + 'static + Zeroable + Pod>(
 
 /// Separates image u8's into various components
 pub fn deinterleave_u8(
-    interleaved_pixels: &[u8], colorspace: ColorSpace
+    interleaved_pixels: &[u8], colorspace: ColorSpace,
 ) -> Result<Vec<Channel>, ImageErrors> {
     if interleaved_pixels.len() % colorspace.num_components() != 0 {
         return Err(ImageErrors::OperationsError(
-            ImageOperationsErrors::InvalidChannelLayout("Extra pixels in the colorspace")
+            ImageOperationsErrors::InvalidChannelLayout("Extra pixels in the colorspace"),
         ));
     }
     let size = interleaved_pixels.len() / colorspace.num_components();
 
     if size == 0 {
         return Err(ImageErrors::GenericStr(
-            "Too Small of an interleaved pixel count"
+            "Too Small of an interleaved pixel count",
         ));
     }
     if colorspace.num_components() == 1 {
@@ -142,11 +142,11 @@ pub fn deinterleave_u8(
 
 /// Separates u16's into various components
 pub fn deinterleave_u16(
-    interleaved_pixels: &[u16], colorspace: ColorSpace
+    interleaved_pixels: &[u16], colorspace: ColorSpace,
 ) -> Result<Vec<Channel>, ImageErrors> {
     if interleaved_pixels.len() % colorspace.num_components() != 0 {
         return Err(ImageErrors::OperationsError(
-            ImageOperationsErrors::InvalidChannelLayout("Extra pixels in the colorspace")
+            ImageOperationsErrors::InvalidChannelLayout("Extra pixels in the colorspace"),
         ));
     }
 
@@ -154,7 +154,7 @@ pub fn deinterleave_u16(
 
     if size == 0 {
         return Err(ImageErrors::GenericStr(
-            "Too Small of an interleaved pixel count"
+            "Too Small of an interleaved pixel count",
         ));
     }
     if colorspace.num_components() == 1 {
@@ -211,18 +211,18 @@ pub fn deinterleave_u16(
 }
 
 pub fn deinterleave_f32(
-    interleaved_pixels: &[f32], colorspace: ColorSpace
+    interleaved_pixels: &[f32], colorspace: ColorSpace,
 ) -> Result<Vec<Channel>, ImageErrors> {
     if interleaved_pixels.len() % colorspace.num_components() != 0 {
         return Err(ImageErrors::OperationsError(
-            ImageOperationsErrors::InvalidChannelLayout("Extra pixels in the colorspace")
+            ImageOperationsErrors::InvalidChannelLayout("Extra pixels in the colorspace"),
         ));
     }
     let size = (interleaved_pixels.len() / colorspace.num_components()) * 4 /*Depth 4  bytes*/;
 
     if size == 0 {
         return Err(ImageErrors::GenericStr(
-            "Too Small of an interleaved pixel count"
+            "Too Small of an interleaved pixel count",
         ));
     }
     if colorspace.num_components() == 1 {

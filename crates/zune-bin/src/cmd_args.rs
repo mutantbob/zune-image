@@ -15,7 +15,7 @@ use zune_image::codecs::ImageFormat;
 use crate::cmd_args::arg_parsers::{IColorSpace, IResizeMethod};
 use crate::cmd_args::help_strings::{
     AFTER_HELP, BOX_BLUR_HELP, BRIGHTEN_HELP, COLORSPACE_HELP, CROP_HELP, GAUSSIAN_BLUR_HELP,
-    THRESHOLD_HELP, TRANSPOSE_HELP
+    THRESHOLD_HELP, TRANSPOSE_HELP,
 };
 
 pub mod arg_parsers;
@@ -25,7 +25,7 @@ pub mod help_strings;
 pub enum MmapOptions {
     No,
     Always,
-    Auto
+    Auto,
 }
 
 impl ValueEnum for MmapOptions {
@@ -37,14 +37,14 @@ impl ValueEnum for MmapOptions {
         Some(match self {
             Self::No => PossibleValue::new("no"),
             Self::Always => PossibleValue::new("always"),
-            Self::Auto => PossibleValue::new("auto")
+            Self::Auto => PossibleValue::new("auto"),
         })
     }
 }
 
 #[derive(Copy, Clone, Debug)]
 pub enum CmdImageFormats {
-    Format(ImageFormat)
+    Format(ImageFormat),
 }
 impl ValueEnum for CmdImageFormats {
     fn value_variants<'a>() -> &'a [Self] {
@@ -57,7 +57,7 @@ impl ValueEnum for CmdImageFormats {
             Self::Format(ImageFormat::PNG),
             Self::Format(ImageFormat::PPM),
             Self::Format(ImageFormat::PSD),
-            Self::Format(ImageFormat::QOI)
+            Self::Format(ImageFormat::QOI),
         ]
     }
 
@@ -73,8 +73,8 @@ impl ValueEnum for CmdImageFormats {
                 ImageFormat::JPEG_XL => Some(PossibleValue::new("jxl")),
                 ImageFormat::HDR => Some(PossibleValue::new("hdr")),
                 ImageFormat::BMP => Some(PossibleValue::new("bmp")),
-                _ => None
-            }
+                _ => None,
+            },
         }
     }
 }
@@ -172,7 +172,7 @@ fn add_logging_options() -> [Arg; 5] {
             .long("no-log")
             .action(ArgAction::SetTrue)
             .help_heading("Logging")
-            .help("No Logging, do not log anything")
+            .help("No Logging, do not log anything"),
     ]
 }
 
@@ -360,7 +360,7 @@ fn add_operations() -> (Vec<Arg>, ArgGroup) {
             .help_heading(HELP_HEADING)
             .allow_negative_numbers(false)
             .help("Rotate image by 90,180 or 270")
-            .value_parser(value_parser!(f32))
+            .value_parser(value_parser!(f32)),
     ];
     args.sort_unstable_by(|x, y| x.get_id().cmp(y.get_id()));
 
@@ -409,7 +409,7 @@ fn add_encode_options() -> (Vec<Arg>, ArgGroup) {
             .help("Strip metadata when encoding images (where supported)")
             .action(ArgAction::SetTrue)
             .group(GROUP)
-            .help_heading(HELP_HEADING)
+            .help_heading(HELP_HEADING),
     ];
     args.sort_unstable_by(|x, y| x.get_id().cmp(y.get_id()));
     let arg_group = ArgGroup::new(GROUP)

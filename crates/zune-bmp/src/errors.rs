@@ -28,7 +28,7 @@ pub enum BmpDecoderErrors {
     TooLargeDimensions(&'static str, usize, usize),
     /// A calculation overflowed
     OverFlowOccurred,
-    IoErrors(ZByteIoError)
+    IoErrors(ZByteIoError),
 }
 
 impl Debug for BmpDecoderErrors {

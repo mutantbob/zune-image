@@ -92,7 +92,7 @@ pub(crate) fn depth_u8_to_u16(from: &[u8], to: &mut [u16], max_value: u16) {
 /// value to the one specified by this operation.
 #[derive(Copy, Clone)]
 pub struct Depth {
-    depth: BitDepth
+    depth: BitDepth,
 }
 
 impl Depth {

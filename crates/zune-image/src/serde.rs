@@ -19,7 +19,7 @@ use crate::metadata::ImageMetadata;
 impl Serialize for ImageMetadata {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: Serializer
+        S: Serializer,
     {
         const STRUCT_FIELDS: usize = 7;
         let mut state = serializer.serialize_struct("Metadata", STRUCT_FIELDS)?;
@@ -71,7 +71,7 @@ impl Serialize for ImageFormat {
     #[allow(clippy::uninlined_format_args)]
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: Serializer
+        S: Serializer,
     {
         serializer.serialize_str(&format!("{:?}", self))
     }

@@ -19,7 +19,7 @@ pub enum PPMEncodeErrors {
     Static(&'static str),
     TooShortInput(usize, usize),
     UnsupportedColorspace(ColorSpace),
-    IoError(ZByteIoError)
+    IoError(ZByteIoError),
 }
 
 impl Debug for PPMEncodeErrors {
@@ -50,7 +50,7 @@ impl From<ZByteIoError> for PPMEncodeErrors {
 enum PPMVersions {
     P5,
     P6,
-    P7
+    P7,
 }
 
 impl Display for PPMVersions {
@@ -58,7 +58,7 @@ impl Display for PPMVersions {
         match self {
             Self::P6 => write!(f, "P6"),
             Self::P5 => write!(f, "P5"),
-            Self::P7 => write!(f, "P7")
+            Self::P7 => write!(f, "P7"),
         }
     }
 }
@@ -91,8 +91,8 @@ impl Display for PPMVersions {
 /// }
 /// ```
 pub struct PPMEncoder<'a> {
-    data:    &'a [u8],
-    options: EncoderOptions
+    data: &'a [u8],
+    options: EncoderOptions,
 }
 
 impl<'a> PPMEncoder<'a> {
@@ -111,10 +111,10 @@ impl<'a> PPMEncoder<'a> {
     }
 
     fn encode_headers<T: ZByteWriterTrait>(
-        &self, stream: &mut ZWriter<T>
+        &self, stream: &mut ZWriter<T>,
     ) -> Result<(), PPMEncodeErrors> {
         let version = version_for_colorspace(self.options.colorspace()).ok_or(
-            PPMEncodeErrors::UnsupportedColorspace(self.options.colorspace())
+            PPMEncodeErrors::UnsupportedColorspace(self.options.colorspace()),
         )?;
 
         let width = self.options.width();
@@ -171,7 +171,7 @@ impl<'a> PPMEncoder<'a> {
                     stream.write_u16_be_err(byte)?;
                 }
             }
-            _ => unreachable!()
+            _ => unreachable!(),
         }
         let position = stream.bytes_written();
         Ok(position)
@@ -183,7 +183,7 @@ fn version_for_colorspace(colorspace: ColorSpace) -> Option<PPMVersions> {
         ColorSpace::Luma => Some(PPMVersions::P5),
         ColorSpace::RGB => Some(PPMVersions::P6),
         ColorSpace::RGBA | ColorSpace::LumaA => Some(PPMVersions::P7),
-        _ => None
+        _ => None,
     }
 }
 
@@ -193,7 +193,7 @@ fn convert_tuple_type_to_pam(colorspace: ColorSpace) -> &'static str {
         ColorSpace::RGB => "RGB",
         ColorSpace::LumaA => "GRAYSCALE_ALPHA",
         ColorSpace::RGBA => "RGB_ALPHA",
-        _ => unreachable!()
+        _ => unreachable!(),
     }
 }
 

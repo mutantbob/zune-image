@@ -32,9 +32,9 @@ use crate::utils::swizzle_channels;
 /// this is how long this particular frame should be shown
 #[derive(Eq, PartialEq)]
 pub struct Frame {
-    pub(crate) channels:    Vec<Channel>,
-    pub(crate) numerator:   usize,
-    pub(crate) denominator: usize
+    pub(crate) channels: Vec<Channel>,
+    pub(crate) numerator: usize,
+    pub(crate) denominator: usize,
 }
 
 impl Clone for Frame {
@@ -84,16 +84,16 @@ impl Clone for Frame {
                     }
                 });
                 return Frame {
-                    channels:    new_channels,
-                    numerator:   self.numerator,
-                    denominator: self.denominator
+                    channels: new_channels,
+                    numerator: self.numerator,
+                    denominator: self.denominator,
                 };
             }
         }
         Frame {
-            channels:    self.channels.clone(),
-            numerator:   self.numerator,
-            denominator: self.denominator
+            channels: self.channels.clone(),
+            numerator: self.numerator,
+            denominator: self.denominator,
         }
     }
 }
@@ -120,7 +120,7 @@ impl Frame {
         Frame {
             channels,
             numerator: 1,
-            denominator: 1
+            denominator: 1,
         }
     }
     /// Create a new frame from a slice of f32 pixels
@@ -136,14 +136,14 @@ impl Frame {
     /// # Panics
     /// Panics in case the pixels aren't evenly divided by expected number of components on the colorspace
     pub fn from_f32(
-        pixels: &[f32], colorspace: ColorSpace, numerator: usize, denominator: usize
+        pixels: &[f32], colorspace: ColorSpace, numerator: usize, denominator: usize,
     ) -> Frame {
         let channels = deinterleave_f32(pixels, colorspace).unwrap();
 
         Frame {
             channels,
             numerator,
-            denominator
+            denominator,
         }
     }
     /// Create a new frame from a slice of u16 pixels
@@ -160,13 +160,13 @@ impl Frame {
     /// Panics in case the pixels aren't evenly divided by expected number of components on the colorspace
 
     pub fn from_u16(
-        pixels: &[u16], colorspace: ColorSpace, numerator: usize, denominator: usize
+        pixels: &[u16], colorspace: ColorSpace, numerator: usize, denominator: usize,
     ) -> Frame {
         let channels = deinterleave_u16(pixels, colorspace).unwrap();
         Frame {
             channels,
             numerator,
-            denominator
+            denominator,
         }
     }
 
@@ -184,13 +184,13 @@ impl Frame {
     /// Panics in case the pixels aren't evenly divided by expected number of components on the colorspace
 
     pub fn from_u8(
-        pixels: &[u8], colorspace: ColorSpace, numerator: usize, denominator: usize
+        pixels: &[u8], colorspace: ColorSpace, numerator: usize, denominator: usize,
     ) -> Frame {
         let channels = deinterleave_u8(pixels, colorspace).unwrap();
         Frame {
             channels,
             numerator,
-            denominator
+            denominator,
         }
     }
 
@@ -238,12 +238,12 @@ impl Frame {
     ///
     /// ```
     pub fn new_with_duration(
-        channels: Vec<Channel>, numerator: usize, denominator: usize
+        channels: Vec<Channel>, numerator: usize, denominator: usize,
     ) -> Frame {
         Frame {
             channels,
             numerator,
-            denominator
+            denominator,
         }
     }
 
@@ -393,7 +393,7 @@ impl Frame {
     ///
 
     pub fn flatten_into<T: Clone + Default + 'static + Copy + Pod>(
-        &self, into: &mut [T]
+        &self, into: &mut [T],
     ) -> Result<usize, ChannelErrors> {
         swizzle_channels(&self.channels, into)
     }
@@ -608,7 +608,7 @@ impl Frame {
     /// frames length
     ///
     pub fn separate_color_and_alpha_ref(
-        &self, color_space: ColorSpace
+        &self, color_space: ColorSpace,
     ) -> Option<(&[Channel], &Channel)> {
         if !color_space.has_alpha() {
             return None;
@@ -652,7 +652,7 @@ impl Frame {
     /// frames length
     ///
     pub fn separate_color_and_alpha_mut(
-        &mut self, color_space: ColorSpace
+        &mut self, color_space: ColorSpace,
     ) -> Option<(&mut [Channel], &mut Channel)> {
         if !color_space.has_alpha() {
             return None;
@@ -742,7 +742,7 @@ mod tests {
             0_u8,
             ColorSpace::MultiBand(NonZeroU32::new(5).unwrap()),
             100,
-            100
+            100,
         );
         let output = image.flatten_to_u8();
         assert_eq!(output[0].len(), 100 * 100 * 5);
@@ -754,7 +754,7 @@ mod tests {
             0_u8,
             ColorSpace::MultiBand(NonZeroU32::new(BAND as u32).unwrap()),
             100,
-            100
+            100,
         );
         image
             .channels_mut(false)

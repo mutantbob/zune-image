@@ -7,7 +7,7 @@
  */
 
 pub fn transpose_scalar<T: Copy + Default>(
-    in_matrix: &[T], out_matrix: &mut [T], width: usize, height: usize
+    in_matrix: &[T], out_matrix: &mut [T], width: usize, height: usize,
 ) {
     // A slightly more optimized scalar transpose,
     // 2x faster than the naive one

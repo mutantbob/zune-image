@@ -63,7 +63,7 @@ fn decode_no_samp(c: &mut Criterion) {
 
 fn decode_h_samp(c: &mut Criterion) {
     let data = read(
-        sample_path().join("test-images/jpeg/benchmarks/speed_bench_horizontal_subsampling.jpg")
+        sample_path().join("test-images/jpeg/benchmarks/speed_bench_horizontal_subsampling.jpg"),
     )
     .unwrap();
     let mut group = c.benchmark_group("jpeg: Horizontal Sub Sampling");
@@ -80,7 +80,7 @@ fn decode_h_samp(c: &mut Criterion) {
 
 fn decode_v_samp(c: &mut Criterion) {
     let data = read(
-        sample_path().join("test-images/jpeg/benchmarks/speed_bench_vertical_subsampling.jpg")
+        sample_path().join("test-images/jpeg/benchmarks/speed_bench_vertical_subsampling.jpg"),
     )
     .unwrap();
     let mut group = c.benchmark_group("jpeg: Vertical sub sampling");

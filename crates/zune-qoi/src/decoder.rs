@@ -16,7 +16,7 @@ use zune_core::log::{error, trace};
 use zune_core::options::DecoderOptions;
 
 use crate::constants::{
-    QOI_MASK_2, QOI_OP_DIFF, QOI_OP_INDEX, QOI_OP_LUMA, QOI_OP_RGB, QOI_OP_RGBA, QOI_OP_RUN
+    QOI_MASK_2, QOI_OP_DIFF, QOI_OP_INDEX, QOI_OP_LUMA, QOI_OP_RGB, QOI_OP_RGBA, QOI_OP_RUN,
 };
 use crate::errors::QoiErrors;
 
@@ -24,7 +24,7 @@ use crate::errors::QoiErrors;
 enum QoiColorspace {
     sRGB,
     // SRGB with Linear alpha
-    Linear
+    Linear,
 }
 
 /// A Quite OK Image decoder
@@ -41,20 +41,20 @@ enum QoiColorspace {
 /// [`decode`]:QoiDecoder::decode
 pub struct QoiDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
-    width:             usize,
-    height:            usize,
-    colorspace:        ColorSpace,
+    width: usize,
+    height: usize,
+    colorspace: ColorSpace,
     colorspace_layout: QoiColorspace,
-    decoded_headers:   bool,
-    stream:            ZReader<T>,
-    options:           DecoderOptions
+    decoded_headers: bool,
+    stream: ZReader<T>,
+    options: DecoderOptions,
 }
 
 impl<T> QoiDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     /// Create a new QOI format decoder with the default options
     ///
@@ -96,13 +96,13 @@ where
     #[allow(clippy::redundant_field_names)]
     pub fn new_with_options(data: T, options: DecoderOptions) -> QoiDecoder<T> {
         QoiDecoder {
-            width:             0,
-            height:            0,
-            colorspace:        ColorSpace::RGB,
+            width: 0,
+            height: 0,
+            colorspace: ColorSpace::RGB,
             colorspace_layout: QoiColorspace::Linear,
-            decoded_headers:   false,
-            stream:            ZReader::new(data),
-            options:           options
+            decoded_headers: false,
+            stream: ZReader::new(data),
+            options: options,
         }
     }
     /// Decode a QOI header storing needed information into
@@ -160,7 +160,7 @@ where
         self.colorspace = match colorspace {
             3 => ColorSpace::RGB,
             4 => ColorSpace::RGBA,
-            _ => return Err(QoiErrors::UnknownChannels(colorspace))
+            _ => return Err(QoiErrors::UnknownChannels(colorspace)),
         };
         self.colorspace_layout = match colorspace_layout {
             0 => QoiColorspace::sRGB,
@@ -251,19 +251,19 @@ where
         if pixels.len() < self.output_buffer_size().unwrap() {
             return Err(QoiErrors::InsufficientData(
                 self.output_buffer_size().unwrap(),
-                pixels.len()
+                pixels.len(),
             ));
         }
 
         match self.colorspace.num_components() {
             3 => self.decode_inner_generic::<3>(pixels)?,
             4 => self.decode_inner_generic::<4>(pixels)?,
-            _ => unreachable!()
+            _ => unreachable!(),
         }
         Ok(())
     }
     fn decode_inner_generic<const SIZE: usize>(
-        &mut self, pixels: &mut [u8]
+        &mut self, pixels: &mut [u8],
     ) -> Result<(), QoiErrors> {
         const LAST_BYTES: [u8; 8] = [0, 0, 0, 0, 0, 0, 0, 1];
 
@@ -325,7 +325,7 @@ where
         if remaining != LAST_BYTES {
             if self.options.strict_mode() {
                 return Err(QoiErrors::GenericStatic(
-                    "Last bytes do not match QOI signature"
+                    "Last bytes do not match QOI signature",
                 ));
             }
             error!("Last bytes do not match QOI signature");

@@ -23,7 +23,7 @@ use crate::traits::{DecoderTrait, EncoderTrait};
 
 #[derive(Copy, Clone, Default)]
 pub struct PPMEncoder {
-    options: Option<EncoderOptions>
+    options: Option<EncoderOptions>,
 }
 
 impl PPMEncoder {
@@ -32,7 +32,7 @@ impl PPMEncoder {
     }
     pub fn new_with_options(options: EncoderOptions) -> PPMEncoder {
         PPMEncoder {
-            options: Some(options)
+            options: Some(options),
         }
     }
 }
@@ -43,7 +43,7 @@ impl EncoderTrait for PPMEncoder {
     }
 
     fn encode_inner<T: ZByteWriterTrait>(
-        &mut self, image: &Image, sink: T
+        &mut self, image: &Image, sink: T,
     ) -> Result<usize, ImageErrors> {
         let options = create_options_for_encoder(self.options, image);
 
@@ -63,7 +63,7 @@ impl EncoderTrait for PPMEncoder {
             ColorSpace::RGB,  // p7
             ColorSpace::Luma, // p7
             ColorSpace::RGBA, // p7
-            ColorSpace::LumaA
+            ColorSpace::LumaA,
         ]
     }
 
@@ -81,7 +81,7 @@ impl EncoderTrait for PPMEncoder {
     fn default_depth(&self, depth: BitDepth) -> BitDepth {
         match depth {
             BitDepth::Float32 | BitDepth::Sixteen => BitDepth::Sixteen,
-            _ => BitDepth::Eight
+            _ => BitDepth::Eight,
         }
     }
     fn set_options(&mut self, opts: EncoderOptions) {
@@ -91,7 +91,7 @@ impl EncoderTrait for PPMEncoder {
 
 impl<T> DecoderTrait for PPMDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     fn decode(&mut self) -> Result<Image, ImageErrors> {
         let pixels = self.decode()?;
@@ -104,7 +104,7 @@ where
             DecodingResult::U8(data) => Image::from_u8(&data, width, height, colorspace),
             DecodingResult::U16(data) => Image::from_u16(&data, width, height, colorspace),
             DecodingResult::F32(data) => Image::from_f32(&data, width, height, colorspace),
-            _ => unreachable!()
+            _ => unreachable!(),
         };
 
         // set metadata details

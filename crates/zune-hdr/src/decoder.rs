@@ -31,17 +31,17 @@ use crate::errors::HdrDecodeErrors;
 ///
 /// For sophisticated algorithms, they may use the metadata to further understand the data.
 pub struct HdrDecoder<T: ZByteReaderTrait> {
-    buf:             ZReader<T>,
-    options:         DecoderOptions,
-    metadata:        BTreeMap<String, String>,
-    width:           usize,
-    height:          usize,
-    decoded_headers: bool
+    buf: ZReader<T>,
+    options: DecoderOptions,
+    metadata: BTreeMap<String, String>,
+    width: usize,
+    height: usize,
+    decoded_headers: bool,
 }
 
 impl<T> HdrDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     /// Create a new HDR decoder
     ///
@@ -94,7 +94,7 @@ where
             width: 0,
             height: 0,
             metadata: BTreeMap::new(),
-            decoded_headers: false
+            decoded_headers: false,
         }
     }
     /// Get key value metadata found in the header
@@ -183,7 +183,7 @@ where
             (_, _) => {
                 return Err(HdrDecodeErrors::UnsupportedOrientation(
                     first_type,
-                    second_type
+                    second_type,
                 ));
             }
         }
@@ -191,7 +191,7 @@ where
             return Err(HdrDecodeErrors::TooLargeDimensions(
                 "height",
                 self.options.max_height(),
-                self.height
+                self.height,
             ));
         }
 
@@ -199,7 +199,7 @@ where
             return Err(HdrDecodeErrors::TooLargeDimensions(
                 "width",
                 self.options.max_width(),
-                self.width
+                self.width,
             ));
         }
 
@@ -302,11 +302,11 @@ where
         if buffer.len() < output_size {
             return Err(HdrDecodeErrors::TooSmallOutputArray(
                 output_size,
-                buffer.len()
+                buffer.len(),
             ));
         }
         if self.width == 0 {
-           return Err(HdrDecodeErrors::Generic("Width cannot be 0"));
+            return Err(HdrDecodeErrors::Generic("Width cannot be 0"));
         }
 
         // single width scanline
@@ -394,7 +394,7 @@ where
     }
 
     fn decompress(
-        &mut self, scanline: &mut [u8], mut width: i32, mut scanline_offset: usize
+        &mut self, scanline: &mut [u8], mut width: i32, mut scanline_offset: usize,
     ) -> Result<(), HdrDecodeErrors> {
         let mut shift = 0;
 
@@ -438,7 +438,7 @@ where
     /// This will write to `write_to` appropriately
     /// resizing the buffer in case the line spans a great length
     fn get_buffer_until(
-        &mut self, needle: u8, write_to: &mut Vec<u8>
+        &mut self, needle: u8, write_to: &mut Vec<u8>,
     ) -> Result<usize, HdrDecodeErrors> {
         write_to.clear();
         let start = self.buf.position()?;

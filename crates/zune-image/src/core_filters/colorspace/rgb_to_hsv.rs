@@ -43,7 +43,7 @@ pub fn hsv_to_rgb_inner(h: f32, s: f32, v: f32) -> [f32; 3] {
         2 => [p, v, t],
         3 => [p, q, v],
         4 => [t, p, v],
-        _ => [v, p, q] // match 5..infinity, we can never go beyond 6 but the compiler can't see that
+        _ => [v, p, q], // match 5..infinity, we can never go beyond 6 but the compiler can't see that
     }
 }
 

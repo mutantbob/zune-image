@@ -14,11 +14,7 @@ use core::arch::x86_64::*;
 #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
 #[target_feature(enable = "avx2")]
 pub unsafe fn upsample_horizontal_avx2(
-    input: &[i16],
-    in_near: &[i16],
-    in_far: &[i16],
-    scratch: &mut [i16],
-    output: &mut [i16],
+    input: &[i16], in_near: &[i16], in_far: &[i16], scratch: &mut [i16], output: &mut [i16],
 ) {
     assert_eq!(input.len() * 2, output.len());
     assert!(input.len() > 2);
@@ -91,11 +87,7 @@ pub unsafe fn upsample_horizontal_avx2(
 #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
 #[target_feature(enable = "avx2")]
 pub unsafe fn upsample_vertical_avx2(
-    input: &[i16],
-    in_near: &[i16],
-    in_far: &[i16],
-    scratch: &mut [i16],
-    output: &mut [i16],
+    input: &[i16], in_near: &[i16], in_far: &[i16], scratch: &mut [i16], output: &mut [i16],
 ) {
     assert_eq!(input.len() * 2, output.len());
     assert_eq!(in_near.len(), input.len());
@@ -174,16 +166,11 @@ pub unsafe fn upsample_vertical_avx2(
 #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
 #[target_feature(enable = "avx2")]
 pub unsafe fn upsample_hv_avx2(
-    input: &[i16],
-    in_near: &[i16],
-    in_far: &[i16],
-    scratch_space: &mut [i16],
-    output: &mut [i16],
+    input: &[i16], in_near: &[i16], in_far: &[i16], scratch_space: &mut [i16], output: &mut [i16],
 ) {
     assert_eq!(input.len() * 4, output.len());
     assert!(input.len() * 2 <= scratch_space.len());
     let scratch_space = &mut scratch_space[..input.len() * 2];
-
 
     upsample_vertical_avx2(input, in_near, in_far, &mut [], scratch_space);
 

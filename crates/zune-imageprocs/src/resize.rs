@@ -45,7 +45,7 @@ pub enum ResizeMethod {
     BSpline,    // B-Spline (B=1, C=0)
     Hermite,    // Hermite filter (B=0, C=0)
     Sinc,       // Sinc with window radius 3
-    Bilinear    // Bilinear (for completeness, 2x2 kernel)
+    Bilinear,   // Bilinear (for completeness, 2x2 kernel)
 }
 
 // pub enum ResizeDimensions{
@@ -56,9 +56,9 @@ pub enum ResizeMethod {
 /// using the resize method specified
 #[derive(Copy, Clone)]
 pub struct Resize {
-    new_width:  usize,
+    new_width: usize,
     new_height: usize,
-    method:     ResizeMethod
+    method: ResizeMethod,
 }
 
 impl Resize {
@@ -76,7 +76,7 @@ impl Resize {
         Resize {
             new_width,
             new_height,
-            method
+            method,
         }
     }
 }
@@ -103,7 +103,7 @@ impl OperationsTrait for Resize {
             trace!("Converting image to linear along resize method");
             let transfers = ImageTransfer::new(
                 TransferFunction::from(transfer_function),
-                ConversionType::GammaToLinear
+                ConversionType::GammaToLinear,
             );
             transfers.execute_impl(image)?;
             let duration = start.elapsed();
@@ -136,7 +136,7 @@ impl OperationsTrait for Resize {
                 old_h,
                 self.new_width,
                 self.new_height,
-                self.method
+                self.method,
             ))
         } else {
             None
@@ -153,7 +153,7 @@ impl OperationsTrait for Resize {
                     old_h,
                     self.new_width,
                     self.new_height,
-                    precomputed_kernels.as_ref()
+                    precomputed_kernels.as_ref(),
                 ),
                 BitType::U16 => resize::<u16>(
                     channel.reinterpret_as()?,
@@ -163,7 +163,7 @@ impl OperationsTrait for Resize {
                     old_h,
                     self.new_width,
                     self.new_height,
-                    precomputed_kernels.as_ref()
+                    precomputed_kernels.as_ref(),
                 ),
 
                 BitType::F32 => {
@@ -175,10 +175,10 @@ impl OperationsTrait for Resize {
                         old_h,
                         self.new_width,
                         self.new_height,
-                        precomputed_kernels.as_ref()
+                        precomputed_kernels.as_ref(),
                     );
                 }
-                d => return Err(ImageErrors::ImageOperationNotImplemented("resize", d))
+                d => return Err(ImageErrors::ImageOperationNotImplemented("resize", d)),
             }
             *channel = new_channel;
             Ok(())
@@ -203,7 +203,7 @@ impl OperationsTrait for Resize {
             trace!("Converting image back to gamma along resize method");
             let transfers = ImageTransfer::new(
                 TransferFunction::from(transfer_function),
-                ConversionType::LinearToGamma
+                ConversionType::LinearToGamma,
             );
             transfers.execute_impl(image)?;
             let duration = start.elapsed();
@@ -229,7 +229,7 @@ impl OperationsTrait for Resize {
     clippy::cast_sign_loss
 )]
 pub fn ratio_dimensions_smaller(
-    old_w: usize, old_h: usize, new_w: usize, new_h: usize
+    old_w: usize, old_h: usize, new_w: usize, new_h: usize,
 ) -> (usize, usize) {
     let ratio_w = old_w as f64 / new_w as f64;
     let ratio_h = old_h as f64 / new_h as f64;
@@ -249,7 +249,7 @@ pub fn ratio_dimensions_smaller(
     clippy::cast_sign_loss
 )]
 pub fn ratio_dimensions_larger(
-    old_w: usize, old_h: usize, new_w: usize, new_h: usize
+    old_w: usize, old_h: usize, new_w: usize, new_h: usize,
 ) -> (usize, usize) {
     let ratio_w = old_w as f64 / new_w as f64;
     let ratio_h = old_h as f64 / new_h as f64;
@@ -274,15 +274,15 @@ pub fn ratio_dimensions_larger(
 /// - `out_width*out_height` do not match `out_image.len()`.
 fn resize<T>(
     in_image: &[T], out_image: &mut [T], method: ResizeMethod, in_width: usize, in_height: usize,
-    out_width: usize, out_height: usize, precomputed_kernels: Option<&PrecomputedKernels>
+    out_width: usize, out_height: usize, precomputed_kernels: Option<&PrecomputedKernels>,
 ) where
     T: Copy + NumOps<T> + Default,
-    f32: std::convert::From<T>
+    f32: std::convert::From<T>,
 {
     match method {
         ResizeMethod::Bilinear => {
             bilinear::bilinear_impl(
-                in_image, out_image, in_width, in_height, out_width, out_height
+                in_image, out_image, in_width, in_height, out_width, out_height,
             );
         }
 
@@ -295,13 +295,13 @@ fn resize<T>(
                     in_height,
                     out_width,
                     out_height,
-                    precomputed_kernels
+                    precomputed_kernels,
                 );
             }
             None => {
                 panic!("Precomputed kernels not loaded");
             }
-        }
+        },
     }
 }
 

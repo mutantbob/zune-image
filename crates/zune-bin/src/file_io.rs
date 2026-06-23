@@ -15,7 +15,7 @@ use zune_image::traits::IntoImage;
 
 pub struct ZuneFile {
     file_path: OsString,
-    options:   DecoderOptions
+    options: DecoderOptions,
 }
 
 impl ZuneFile {
@@ -34,8 +34,8 @@ impl IntoImage for ZuneFile {
 }
 
 pub struct ZuneMem<T: AsRef<[u8]>> {
-    source:  T,
-    options: DecoderOptions
+    source: T,
+    options: DecoderOptions,
 }
 impl<T: AsRef<[u8]>> ZuneMem<T> {
     pub fn new(source: T, options: DecoderOptions) -> ZuneMem<T> {

@@ -32,14 +32,14 @@ pub enum JxlEncodeErrors {
     /// Generic error
     Generic(&'static str),
 
-    IoErrors(ZByteIoError)
+    IoErrors(ZByteIoError),
 }
 
 pub const SUPPORTED_COLORSPACES: [ColorSpace; 4] = [
     ColorSpace::Luma,
     ColorSpace::LumaA,
     ColorSpace::RGBA,
-    ColorSpace::RGB
+    ColorSpace::RGB,
 ];
 pub const SUPPORTED_DEPTHS: [BitDepth; 2] = [BitDepth::Eight, BitDepth::Sixteen];
 

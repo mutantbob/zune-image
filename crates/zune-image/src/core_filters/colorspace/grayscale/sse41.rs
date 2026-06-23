@@ -23,7 +23,7 @@ use crate::core_filters::colorspace::grayscale::scalar::convert_rgb_to_grayscale
     clippy::cast_possible_wrap
 )]
 pub(crate) unsafe fn convert_rgb_to_grayscale_u8_sse41(
-    r: &[u8], g: &[u8], b: &[u8], gr: &mut [u8]
+    r: &[u8], g: &[u8], b: &[u8], gr: &mut [u8],
 ) {
     // Code is from https://stackoverflow.com/questions/57832444/efficient-c-code-no-libs-for-image-transformation-into-custom-rgb-pixel-grey
     const CHUNK_SIZE: usize = 8;
@@ -60,7 +60,7 @@ pub(crate) unsafe fn convert_rgb_to_grayscale_u8_sse41(
         //Calculate Y = 0.2989*R + 0.5870*G + 0.1140*B (use fixed point computations)
         let mut g_out = _mm_add_epi16(
             _mm_add_epi16(_mm_mulhrs_epi16(r_c, r_coef), _mm_mulhrs_epi16(g_c, g_coef)),
-            _mm_mulhrs_epi16(b_c, b_coef)
+            _mm_mulhrs_epi16(b_c, b_coef),
         );
         // Divide by 64
         g_out = _mm_srli_epi16::<6>(g_out);

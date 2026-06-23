@@ -26,7 +26,7 @@ use crate::ZImage;
 
 fn exec_imgproc<T>(image: *mut ZImage, filter: T, status: *mut ZStatus)
 where
-    T: OperationsTrait
+    T: OperationsTrait,
 {
     if status.is_null() {
         return;
@@ -56,7 +56,7 @@ where
 ///
 #[no_mangle]
 pub extern "C" fn zil_imgproc_adjust_contrast(
-    image: *mut ZImage, contrast: c_float, status: *mut ZStatus
+    image: *mut ZImage, contrast: c_float, status: *mut ZStatus,
 ) {
     let filter = Contrast::new(contrast);
     exec_imgproc(image, filter, status);
@@ -87,12 +87,12 @@ pub extern "C" fn zil_imgproc_auto_orient(image: *mut ZImage, status: *mut ZStat
 ///   When d>0, it specifies the neighborhood size regardless of sigma_space. Otherwise, d is proportional to sigma_space.
 #[no_mangle]
 pub extern "C" fn zil_imgproc_bilateral_filter(
-    image: *mut ZImage, d: i32, sigma_color: f32, sigma_space: f32, status: *mut ZStatus
+    image: *mut ZImage, d: i32, sigma_color: f32, sigma_space: f32, status: *mut ZStatus,
 ) {
     exec_imgproc(
         image,
         BilateralFilter::new(d, sigma_color, sigma_space),
-        status
+        status,
     );
 }
 
@@ -114,7 +114,7 @@ pub extern "C" fn zil_imgproc_bilateral_filter(
 /// \param status Image operation status, query this to tell you if the operation succeded
 #[no_mangle]
 pub extern "C" fn zil_imgproc_blend(
-    image1: *mut ZImage, image2: *const ZImage, src_alpha: f32, status: *mut ZStatus
+    image1: *mut ZImage, image2: *const ZImage, src_alpha: f32, status: *mut ZStatus,
 ) {
     if status.is_null() {
         return;
@@ -150,7 +150,7 @@ pub extern "C" fn zil_imgproc_blend(
 ///
 #[no_mangle]
 pub extern "C" fn zil_imgproc_exposure(
-    image: *mut ZImage, exposure: f32, black_point: f32, status: *mut ZStatus
+    image: *mut ZImage, exposure: f32, black_point: f32, status: *mut ZStatus,
 ) {
     let filter = Exposure::new(exposure, black_point);
     exec_imgproc(image, filter, status)
@@ -166,7 +166,7 @@ pub extern "C" fn zil_imgproc_exposure(
 /// was successful
 #[no_mangle]
 pub extern "C" fn zil_imgproc_change_depth(
-    image: *mut ZImage, to: ZImageDepth, status: *mut ZStatus
+    image: *mut ZImage, to: ZImageDepth, status: *mut ZStatus,
 ) {
     let depth = Depth::new(to.to_depth());
     exec_imgproc(image, depth, status);
@@ -181,7 +181,7 @@ pub extern "C" fn zil_imgproc_change_depth(
 /// \param status: Result of image operation, query this to see if operation was successful
 #[no_mangle]
 pub extern "C" fn zil_imgproc_convert_colorspace(
-    image: *mut ZImage, to: ZImageColorspace, status: *mut ZStatus
+    image: *mut ZImage, to: ZImageColorspace, status: *mut ZStatus,
 ) {
     let colorspace = ColorspaceConv::new(to.to_colorspace());
     exec_imgproc(image, colorspace, status)
@@ -203,7 +203,7 @@ pub extern "C" fn zil_imgproc_convert_colorspace(
 #[no_mangle]
 pub extern "C" fn zil_imgproc_crop(
     image: *mut ZImage, new_width: usize, new_height: usize, x: usize, y: usize,
-    status: *mut ZStatus
+    status: *mut ZStatus,
 ) {
     let filter = Crop::new(new_width, new_height, x, y);
     exec_imgproc(image, filter, status)
@@ -317,7 +317,7 @@ pub extern "C" fn zil_imgproc_gaussian_blur(image: *mut ZImage, sigma: f32, stat
 /// to this
 #[no_mangle]
 pub extern "C" fn zil_imgproc_stretch_contrast(
-    image: *mut ZImage, lower: f32, higher: f32, status: *mut ZStatus
+    image: *mut ZImage, lower: f32, higher: f32, status: *mut ZStatus,
 ) {
     exec_imgproc(image, StretchContrast::new(lower, higher), status)
 }

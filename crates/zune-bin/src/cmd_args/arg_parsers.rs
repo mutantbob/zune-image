@@ -19,7 +19,7 @@ pub enum IColorSpace {
     YCbCr,
     RGBA,
     Luma,
-    LumaA
+    LumaA,
 }
 
 impl IColorSpace {
@@ -31,7 +31,7 @@ impl IColorSpace {
             IColorSpace::YCbCr => ColorSpace::YCbCr,
             IColorSpace::RGBA => ColorSpace::RGBA,
             IColorSpace::Luma => ColorSpace::Luma,
-            IColorSpace::LumaA => ColorSpace::LumaA
+            IColorSpace::LumaA => ColorSpace::LumaA,
         }
     }
 }
@@ -44,7 +44,7 @@ impl ValueEnum for IColorSpace {
             Self::YCbCr,
             Self::GRAYSCALE,
             Self::Luma,
-            Self::LumaA
+            Self::LumaA,
         ]
     }
 
@@ -55,7 +55,7 @@ impl ValueEnum for IColorSpace {
             Self::YCbCr => PossibleValue::new("ycbcr"),
             Self::GRAYSCALE => PossibleValue::new("grayscale"),
             Self::LumaA => PossibleValue::new("lumaA"),
-            Self::Luma => PossibleValue::new("luma")
+            Self::Luma => PossibleValue::new("luma"),
         })
     }
 }
@@ -82,7 +82,7 @@ pub enum IResizeMethod {
     Mitchell,   // Mitchell filter (B=1/3, C=1/3) - same as Bicubic but explicit
     BSpline,    // B-Spline (B=1, C=0)
     Hermite,    // Hermite filter (B=0, C=0)
-    Sinc
+    Sinc,
 }
 
 impl IResizeMethod {
@@ -96,7 +96,7 @@ impl IResizeMethod {
             IResizeMethod::Mitchell => ResizeMethod::Mitchell,
             IResizeMethod::BSpline => ResizeMethod::BSpline,
             IResizeMethod::Hermite => ResizeMethod::Hermite,
-            IResizeMethod::Sinc => ResizeMethod::Sinc
+            IResizeMethod::Sinc => ResizeMethod::Sinc,
         }
     }
 }
@@ -112,7 +112,7 @@ impl ValueEnum for IResizeMethod {
             Self::Mitchell,
             Self::BSpline,
             Self::Hermite,
-            Self::Sinc
+            Self::Sinc,
         ]
     }
 
@@ -126,7 +126,7 @@ impl ValueEnum for IResizeMethod {
             Self::Mitchell => PossibleValue::new("mitchell"),
             Self::BSpline => PossibleValue::new("bspline"),
             Self::Hermite => PossibleValue::new("hermite"),
-            Self::Sinc => PossibleValue::new("sinc")
+            Self::Sinc => PossibleValue::new("sinc"),
         })
     }
 }

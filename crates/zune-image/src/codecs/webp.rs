@@ -16,7 +16,7 @@ use crate::metadata::{AlphaState, ImageMetadata};
 use crate::traits::{DecoderTrait, EncoderTrait};
 
 pub struct ZuneWebpDecoder<T: BufRead + Seek> {
-    inner: image_webp::WebPDecoder<T>
+    inner: image_webp::WebPDecoder<T>,
 }
 impl<T: BufRead + Seek> ZuneWebpDecoder<T> {
     pub fn new(r: T) -> Result<Self, ImageErrors> {
@@ -57,7 +57,7 @@ impl<T: BufRead + Seek> DecoderTrait for ZuneWebpDecoder<T> {
         // colorspace is rgba, if not RGB
         match self.inner.has_alpha() {
             true => ColorSpace::RGBA,
-            false => ColorSpace::RGB
+            false => ColorSpace::RGB,
         }
     }
 
@@ -78,7 +78,7 @@ impl<T: BufRead + Seek> DecoderTrait for ZuneWebpDecoder<T> {
             #[cfg(feature = "metadata")]
             exif: None,
             icc_chunk: None,
-            is_linear: false
+            is_linear: false,
         }));
     }
 }
@@ -95,7 +95,7 @@ impl EncoderTrait for ZuneWebpImageEncoder {
     }
 
     fn encode_inner<T: ZByteWriterTrait>(
-        &mut self, image: &Image, mut sink: T
+        &mut self, image: &Image, mut sink: T,
     ) -> Result<usize, ImageErrors> {
         trace!("Starting webp encoder");
         // First make options
@@ -137,8 +137,8 @@ impl EncoderTrait for ZuneWebpImageEncoder {
                 return Err(ImageErrors::EncodeErrors(
                     ImgEncodeErrors::UnsupportedColorspace(
                         options.colorspace(),
-                        self.supported_colorspaces()
-                    )
+                        self.supported_colorspaces(),
+                    ),
                 ))
             }
         };
@@ -147,7 +147,7 @@ impl EncoderTrait for ZuneWebpImageEncoder {
                 data,
                 options.width() as u32,
                 options.height() as u32,
-                color_type
+                color_type,
             )
             .map_err(|e| ImageErrors::EncodeErrors(ImgEncodeErrors::Generic(e.to_string())))?;
 
@@ -159,7 +159,7 @@ impl EncoderTrait for ZuneWebpImageEncoder {
             ColorSpace::RGB,
             ColorSpace::RGBA,
             ColorSpace::Luma,
-            ColorSpace::LumaA
+            ColorSpace::LumaA,
         ]
     }
     fn format(&self) -> ImageFormat {

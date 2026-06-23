@@ -62,7 +62,7 @@ fn build_gamma_lut<T: Default + NumOps<T> + Copy>(value: f32, max_value: u16) ->
 /// This operation is internally multithreaded, where supported
 #[derive(Default)]
 pub struct Gamma {
-    value: f32
+    value: f32,
 }
 
 impl Gamma {
@@ -147,7 +147,7 @@ impl OperationsTrait for Gamma {
 )]
 pub fn gamma<T>(pixels: &mut [T], lut: &[T])
 where
-    T: Copy + NumOps<T> + Default
+    T: Copy + NumOps<T> + Default,
 {
     // now do gamma correction
     for px in pixels {
@@ -156,5 +156,3 @@ where
         *px = *lut.get((*px).to_usize()).unwrap_or(&T::one());
     }
 }
-
-

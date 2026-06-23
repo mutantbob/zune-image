@@ -10,10 +10,10 @@ use crate::traits::NumOps;
 )]
 pub fn bilinear_impl<T>(
     in_channel: &[T], out_channel: &mut [T], in_width: usize, in_height: usize, out_width: usize,
-    out_height: usize
+    out_height: usize,
 ) where
     T: Copy + NumOps<T>,
-    f32: std::convert::From<T>
+    f32: std::convert::From<T>,
 {
     let w_ratio = 1.0 / out_width as f32 * in_width as f32;
     let h_ratio = 1.0 / out_height as f32 * in_height as f32;

@@ -15,7 +15,7 @@ pub enum GifDecoderErrors {
     /// A calculation that wasn't meant to overflow overflowed
     OverflowError(&'static str),
     /// Too small size
-    TooSmallSize(usize, usize)
+    TooSmallSize(usize, usize),
 }
 impl Debug for GifDecoderErrors {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {

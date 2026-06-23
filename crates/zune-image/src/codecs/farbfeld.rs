@@ -25,7 +25,7 @@ use crate::traits::{DecodeInto, DecoderTrait, EncoderTrait};
 
 impl<T> DecoderTrait for FarbFeldDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     fn decode(&mut self) -> Result<Image, ImageErrors> {
         let pixels = self.decode().map_err(ImageErrors::from)?;
@@ -87,7 +87,7 @@ impl From<FarbFeldErrors> for ImageErrors {
 /// understands
 #[derive(Default)]
 pub struct FarbFeldEncoder {
-    options: Option<EncoderOptions>
+    options: Option<EncoderOptions>,
 }
 
 impl FarbFeldEncoder {
@@ -98,7 +98,7 @@ impl FarbFeldEncoder {
     /// Create a new encoder with specified options
     pub fn new_with_options(options: EncoderOptions) -> FarbFeldEncoder {
         FarbFeldEncoder {
-            options: Some(options)
+            options: Some(options),
         }
     }
 }
@@ -109,7 +109,7 @@ impl EncoderTrait for FarbFeldEncoder {
     }
 
     fn encode_inner<T: ZByteWriterTrait>(
-        &mut self, image: &Image, sink: T
+        &mut self, image: &Image, sink: T,
     ) -> Result<usize, ImageErrors> {
         let options = create_options_for_encoder(self.options, image);
 
@@ -158,7 +158,7 @@ impl From<FarbFeldEncoderErrors> for ImgEncodeErrors {
 
 impl<T> DecodeInto for FarbFeldDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     type BufferType = u16;
 

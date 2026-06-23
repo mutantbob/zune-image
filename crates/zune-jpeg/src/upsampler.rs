@@ -163,10 +163,7 @@ pub fn choose_v_samp_function(options: &DecoderOptions) -> UpSampler {
 /// Upsample nothing
 
 pub fn upsample_no_op(
-    _input: &[i16],
-    _in_ref: &[i16],
-    _in_near: &[i16],
-    _scratch_space: &mut [i16],
+    _input: &[i16], _in_ref: &[i16], _in_near: &[i16], _scratch_space: &mut [i16],
     _output: &mut [i16],
 ) {
 }
@@ -207,26 +204,32 @@ mod tests {
 
         #[test]
         fn avx2_vertical() {
-            _test_vertical(|a: &[i16], b: &[i16], c: &[i16], d: &mut [i16], e: &mut [i16]| {
-                // SAFETY: Test guarded behind `target_feature`
-                unsafe { avx2::upsample_vertical_avx2(a, b, c, d, e) }
-            })
+            _test_vertical(
+                |a: &[i16], b: &[i16], c: &[i16], d: &mut [i16], e: &mut [i16]| {
+                    // SAFETY: Test guarded behind `target_feature`
+                    unsafe { avx2::upsample_vertical_avx2(a, b, c, d, e) }
+                },
+            )
         }
 
         #[test]
         fn avx2_horizontal() {
-            _test_horizontal(|a: &[i16], b: &[i16], c: &[i16], d: &mut [i16], e: &mut [i16]| {
-                // SAFETY: Test guarded behind `target_feature`
-                unsafe { avx2::upsample_horizontal_avx2(a, b, c, d, e) }
-            })
+            _test_horizontal(
+                |a: &[i16], b: &[i16], c: &[i16], d: &mut [i16], e: &mut [i16]| {
+                    // SAFETY: Test guarded behind `target_feature`
+                    unsafe { avx2::upsample_horizontal_avx2(a, b, c, d, e) }
+                },
+            )
         }
 
         #[test]
         fn avx2_hv() {
-            _test_hv(|a: &[i16], b: &[i16], c: &[i16], d: &mut [i16], e: &mut [i16]| {
-                // SAFETY: Test guarded behind `target_feature`
-                unsafe { avx2::upsample_hv_avx2(a, b, c, d, e) }
-            })
+            _test_hv(
+                |a: &[i16], b: &[i16], c: &[i16], d: &mut [i16], e: &mut [i16]| {
+                    // SAFETY: Test guarded behind `target_feature`
+                    unsafe { avx2::upsample_hv_avx2(a, b, c, d, e) }
+                },
+            )
         }
     }
 
@@ -238,26 +241,32 @@ mod tests {
 
         #[test]
         fn neon_vertical() {
-            _test_vertical(|a: &[i16], b: &[i16], c: &[i16], d: &mut [i16], e: &mut [i16]| {
-                // SAFETY: Test guarded behind `target_feature`
-                unsafe { neon::upsample_vertical_neon(a, b, c, d, e) }
-            })
+            _test_vertical(
+                |a: &[i16], b: &[i16], c: &[i16], d: &mut [i16], e: &mut [i16]| {
+                    // SAFETY: Test guarded behind `target_feature`
+                    unsafe { neon::upsample_vertical_neon(a, b, c, d, e) }
+                },
+            )
         }
 
         #[test]
         fn neon_horizontal() {
-            _test_horizontal(|a: &[i16], b: &[i16], c: &[i16], d: &mut [i16], e: &mut [i16]| {
-                // SAFETY: Test guarded behind `target_feature`
-                unsafe { neon::upsample_horizontal_neon(a, b, c, d, e) }
-            })
+            _test_horizontal(
+                |a: &[i16], b: &[i16], c: &[i16], d: &mut [i16], e: &mut [i16]| {
+                    // SAFETY: Test guarded behind `target_feature`
+                    unsafe { neon::upsample_horizontal_neon(a, b, c, d, e) }
+                },
+            )
         }
 
         #[test]
         fn neon_hv() {
-            _test_hv(|a: &[i16], b: &[i16], c: &[i16], d: &mut [i16], e: &mut [i16]| {
-                // SAFETY: Test guarded behind `target_feature`
-                unsafe { neon::upsample_hv_neon(a, b, c, d, e) }
-            })
+            _test_hv(
+                |a: &[i16], b: &[i16], c: &[i16], d: &mut [i16], e: &mut [i16]| {
+                    // SAFETY: Test guarded behind `target_feature`
+                    unsafe { neon::upsample_hv_neon(a, b, c, d, e) }
+                },
+            )
         }
     }
 

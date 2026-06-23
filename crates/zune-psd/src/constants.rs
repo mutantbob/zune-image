@@ -19,13 +19,13 @@ pub enum ColorModes {
     CYMK = 4,
     MultiChannel = 7,
     DuoTone = 8,
-    LabColor = 9
+    LabColor = 9,
 }
 
 impl ColorModes {
     pub fn from_int(int: u16) -> Option<ColorModes> {
         use crate::constants::ColorModes::{
-            Bitmap, DuoTone, Grayscale, IndexedColor, LabColor, CYMK, RGB
+            Bitmap, DuoTone, Grayscale, IndexedColor, LabColor, CYMK, RGB,
         };
 
         match int {
@@ -36,7 +36,7 @@ impl ColorModes {
             4 => Some(CYMK),
             7 => Some(DuoTone),
             9 => Some(LabColor),
-            _ => None
+            _ => None,
         }
     }
 }
@@ -44,7 +44,7 @@ impl ColorModes {
 #[derive(Copy, Clone)]
 pub enum CompressionMethod {
     NoCompression = 0,
-    RLE = 1
+    RLE = 1,
 }
 
 impl CompressionMethod {
@@ -52,7 +52,7 @@ impl CompressionMethod {
         match int {
             0 => Some(Self::NoCompression),
             1 => Some(Self::RLE),
-            _ => None
+            _ => None,
         }
     }
 }

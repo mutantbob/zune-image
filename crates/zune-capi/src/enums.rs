@@ -32,7 +32,7 @@ pub enum ZImageFormat {
     /// Radiance HDR decoder
     ZilHDR,
     /// Windows Bitmap Files
-    ZilBMP
+    ZilBMP,
 }
 
 impl ZImageFormat {
@@ -48,7 +48,7 @@ impl ZImageFormat {
             ZImageFormat::ZilJPEG_XL => ImageFormat::JPEG_XL,
             ZImageFormat::ZilHDR => ImageFormat::HDR,
             ZImageFormat::ZilBMP => ImageFormat::BMP,
-            _ => ImageFormat::Unknown
+            _ => ImageFormat::Unknown,
         }
     }
 }
@@ -64,7 +64,7 @@ impl From<ImageFormat> for ZImageFormat {
             ImageFormat::JPEG_XL => ZImageFormat::ZilJPEG_XL,
             ImageFormat::HDR => ZImageFormat::ZilHDR,
             ImageFormat::BMP => ZImageFormat::ZilBMP,
-            _ => ZImageFormat::ZilUnknownFormat
+            _ => ZImageFormat::ZilUnknownFormat,
         }
     }
 }
@@ -90,7 +90,7 @@ pub enum ZImageDepth {
     /// 16 bit images
     ZilU16 = 2,
     /// Float 32 images   
-    ZilF32 = 4
+    ZilF32 = 4,
 }
 
 impl ZImageDepth {
@@ -99,7 +99,7 @@ impl ZImageDepth {
             ZImageDepth::ZilUnknownDepth => BitDepth::Unknown,
             ZImageDepth::ZilU8 => BitDepth::Eight,
             ZImageDepth::ZilU16 => BitDepth::Sixteen,
-            ZImageDepth::ZilF32 => BitDepth::Float32
+            ZImageDepth::ZilF32 => BitDepth::Float32,
         }
     }
 }
@@ -109,7 +109,7 @@ impl From<BitDepth> for ZImageDepth {
             BitDepth::Eight => ZImageDepth::ZilU8,
             BitDepth::Sixteen => ZImageDepth::ZilU16,
             BitDepth::Float32 => ZImageDepth::ZilF32,
-            _ => ZImageDepth::ZilUnknownDepth
+            _ => ZImageDepth::ZilUnknownDepth,
         }
     }
 }
@@ -141,7 +141,7 @@ pub enum ZImageColorspace {
     /// Hue, Saturation, Lightness,
     ZilHSL,
     /// Hue, Saturation,Variance
-    ZilHSV
+    ZilHSV,
 }
 
 impl ZImageColorspace {
@@ -159,7 +159,7 @@ impl ZImageColorspace {
             Self::ZilARGB => ColorSpace::ARGB,
             Self::ZilHSL => ColorSpace::HSL,
             Self::ZilHSV => ColorSpace::HSV,
-            Self::ZilUnknownColorspace => ColorSpace::Unknown
+            Self::ZilUnknownColorspace => ColorSpace::Unknown,
         }
     }
 }
@@ -179,7 +179,7 @@ impl From<ColorSpace> for ZImageColorspace {
             ColorSpace::ARGB => ZImageColorspace::ZilARGB,
             ColorSpace::HSV => ZImageColorspace::ZilHSV,
             ColorSpace::HSL => ZImageColorspace::ZilHSL,
-            _ => ZImageColorspace::ZilUnknownColorspace
+            _ => ZImageColorspace::ZilUnknownColorspace,
         }
     }
 }

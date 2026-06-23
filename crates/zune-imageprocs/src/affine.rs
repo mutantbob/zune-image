@@ -14,12 +14,12 @@ use crate::utils::execute_on;
 /// | 0  0  1  |
 #[derive(Debug, Clone, Copy)]
 pub struct AffineTransform {
-    pub a:  f32,
-    pub b:  f32,
-    pub c:  f32,
-    pub d:  f32,
+    pub a: f32,
+    pub b: f32,
+    pub c: f32,
+    pub d: f32,
     pub tx: f32,
-    pub ty: f32
+    pub ty: f32,
 }
 
 impl AffineTransform {
@@ -29,12 +29,12 @@ impl AffineTransform {
     /// Identity transform (no change)
     pub fn identity() -> Self {
         Self {
-            a:  1.0,
-            b:  0.0,
-            c:  0.0,
-            d:  1.0,
+            a: 1.0,
+            b: 0.0,
+            c: 0.0,
+            d: 1.0,
             tx: 0.0,
-            ty: 0.0
+            ty: 0.0,
         }
     }
 
@@ -44,12 +44,12 @@ impl AffineTransform {
         let cos = rad.cos();
         let sin = rad.sin();
         Self {
-            a:  cos,
-            b:  -sin,
-            c:  sin,
-            d:  cos,
+            a: cos,
+            b: -sin,
+            c: sin,
+            d: cos,
             tx: 0.0,
-            ty: 0.0
+            ty: 0.0,
         }
     }
 
@@ -61,43 +61,43 @@ impl AffineTransform {
             c: 0.0,
             d: 1.0,
             tx,
-            ty
+            ty,
         }
     }
 
     /// Scaling
     pub fn scale(sx: f32, sy: f32) -> Self {
         Self {
-            a:  sx,
-            b:  0.0,
-            c:  0.0,
-            d:  sy,
+            a: sx,
+            b: 0.0,
+            c: 0.0,
+            d: sy,
             tx: 0.0,
-            ty: 0.0
+            ty: 0.0,
         }
     }
 
     /// Shear
     pub fn shear(shx: f32, shy: f32) -> Self {
         Self {
-            a:  1.0,
-            b:  shx,
-            c:  shy,
-            d:  1.0,
+            a: 1.0,
+            b: shx,
+            c: shy,
+            d: 1.0,
             tx: 0.0,
-            ty: 0.0
+            ty: 0.0,
         }
     }
 
     /// Compose two transforms (multiply matrices)
     pub fn then(&self, other: &AffineTransform) -> Self {
         Self {
-            a:  self.a * other.a + self.b * other.c,
-            b:  self.a * other.b + self.b * other.d,
-            c:  self.c * other.a + self.d * other.c,
-            d:  self.c * other.b + self.d * other.d,
+            a: self.a * other.a + self.b * other.c,
+            b: self.a * other.b + self.b * other.d,
+            c: self.c * other.a + self.d * other.c,
+            d: self.c * other.b + self.d * other.d,
             tx: self.a * other.tx + self.b * other.ty + self.tx,
-            ty: self.c * other.tx + self.d * other.ty + self.ty
+            ty: self.c * other.tx + self.d * other.ty + self.ty,
         }
     }
 
@@ -105,7 +105,7 @@ impl AffineTransform {
     pub fn transform_point(&self, x: f32, y: f32) -> (f32, f32) {
         (
             self.a * x + self.b * y + self.tx,
-            self.c * x + self.d * y + self.ty
+            self.c * x + self.d * y + self.ty,
         )
     }
 
@@ -118,12 +118,12 @@ impl AffineTransform {
 
         let inv_det = 1.0 / det;
         Some(Self {
-            a:  self.d * inv_det,
-            b:  -self.b * inv_det,
-            c:  -self.c * inv_det,
-            d:  self.a * inv_det,
+            a: self.d * inv_det,
+            b: -self.b * inv_det,
+            c: -self.c * inv_det,
+            d: self.a * inv_det,
             tx: (self.b * self.ty - self.d * self.tx) * inv_det,
-            ty: (self.c * self.tx - self.a * self.ty) * inv_det
+            ty: (self.c * self.tx - self.a * self.ty) * inv_det,
         })
     }
 }
@@ -142,8 +142,13 @@ impl OperationsTrait for AffineTransform {
         match self.inverse() {
             Some(inv) => inv,
             None => {
-                warn!("a={},b={},c={},d={},tx={},ty={}", self.a, self.b, self.c,self.d, self.tx, self.ty);
-                return Err(ImageErrors::GenericString("AffineTransform doesn't have inverse".to_string()));
+                warn!(
+                    "a={},b={},c={},d={},tx={},ty={}",
+                    self.a, self.b, self.c, self.d, self.tx, self.ty
+                );
+                return Err(ImageErrors::GenericString(
+                    "AffineTransform doesn't have inverse".to_string(),
+                ));
             } // Degenerate transform
         };
         let affine_fn = |channel: &mut Channel| -> Result<(), ImageErrors> {
@@ -157,7 +162,7 @@ impl OperationsTrait for AffineTransform {
                     h,
                     new_w,
                     new_h,
-                    self
+                    self,
                 ),
                 BitType::U16 => affine_transform_channel::<u16>(
                     channel.reinterpret_as()?,
@@ -166,7 +171,7 @@ impl OperationsTrait for AffineTransform {
                     h,
                     new_w,
                     new_h,
-                    self
+                    self,
                 ),
                 BitType::F32 => affine_transform_channel::<f32>(
                     channel.reinterpret_as()?,
@@ -175,9 +180,9 @@ impl OperationsTrait for AffineTransform {
                     h,
                     new_w,
                     new_h,
-                    self
+                    self,
                 ),
-                d => return Err(ImageErrors::ImageOperationNotImplemented("affine", d))
+                d => return Err(ImageErrors::ImageOperationNotImplemented("affine", d)),
             }
             *channel = new_channel;
             Ok(())
@@ -195,14 +200,14 @@ impl OperationsTrait for AffineTransform {
 
 /// Calculate output dimensions needed for an affine transform
 pub fn get_affine_output_dimensions(
-    width: usize, height: usize, transform: &AffineTransform
+    width: usize, height: usize, transform: &AffineTransform,
 ) -> (usize, usize) {
     // Transform all four corners
     let corners = [
         (0.0, 0.0),
         (width as f32, 0.0),
         (0.0, height as f32),
-        (width as f32, height as f32)
+        (width as f32, height as f32),
     ];
 
     let mut min_x = f32::INFINITY;
@@ -227,7 +232,7 @@ pub fn get_affine_output_dimensions(
 /// Apply affine transform to a single channel of u8 data
 pub fn affine_transform_channel<T: Copy + Default + NumOps<T>>(
     in_channel: &[T], out_channel: &mut [T], in_width: usize, in_height: usize, out_width: usize,
-    out_height: usize, transform: &AffineTransform
+    out_height: usize, transform: &AffineTransform,
 ) {
     // Get inverse transform for reverse mapping
     let inv_transform = match transform.inverse() {
@@ -246,13 +251,12 @@ pub fn affine_transform_channel<T: Copy + Default + NumOps<T>>(
     let tx = inv_transform.tx;
     let ty = inv_transform.ty;
 
-
     // Calculate offset to center the output
     let corners = [
         (0.0, 0.0),
         (in_width as f32, 0.0),
         (0.0, in_height as f32),
-        (in_width as f32, in_height as f32)
+        (in_width as f32, in_height as f32),
     ];
 
     let mut min_x = f32::INFINITY;
@@ -273,7 +277,6 @@ pub fn affine_transform_channel<T: Copy + Default + NumOps<T>>(
         let dy = d * y;
 
         for out_x in 0..out_width {
-
             let x = out_x as f32 + min_x;
 
             // Now just multiply and add

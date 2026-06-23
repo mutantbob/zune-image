@@ -29,7 +29,7 @@ pub enum HdrDecodeErrors {
     /// The output array is too small to contain the whole
     /// image
     TooSmallOutputArray(usize, usize),
-    IoErrors(ZByteIoError)
+    IoErrors(ZByteIoError),
 }
 
 impl Debug for HdrDecodeErrors {
@@ -100,7 +100,7 @@ pub enum HdrEncodeErrors {
     WrongInputSize(usize, usize),
     /// Generic message
     Static(&'static str),
-    IoErrors(ZByteIoError)
+    IoErrors(ZByteIoError),
 }
 
 impl Debug for HdrEncodeErrors {
@@ -113,7 +113,7 @@ impl Debug for HdrEncodeErrors {
                 writeln!(f, "Input array length {found} doesn't match {expected}")
             }
             HdrEncodeErrors::Static(err) => writeln!(f, "{}", err),
-            HdrEncodeErrors::IoErrors(err) => writeln!(f, "I/O error {:?}", err)
+            HdrEncodeErrors::IoErrors(err) => writeln!(f, "I/O error {:?}", err),
         }
     }
 }

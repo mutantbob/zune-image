@@ -42,7 +42,7 @@ use crate::traits::{DecoderTrait, EncoderTrait};
 /// Image struct and the [zune_jpegxl::SimpleJxlEncoder](zune_jpegxl::JxlSimpleEncoder)
 #[derive(Default, Copy, Clone)]
 pub struct JxlEncoder {
-    options: Option<EncoderOptions>
+    options: Option<EncoderOptions>,
 }
 
 impl JxlEncoder {
@@ -56,7 +56,7 @@ impl JxlEncoder {
     /// Create new encoder with custom options
     pub fn new_with_options(options: EncoderOptions) -> JxlEncoder {
         JxlEncoder {
-            options: Some(options)
+            options: Some(options),
         }
     }
 }
@@ -67,7 +67,7 @@ impl EncoderTrait for JxlEncoder {
     }
 
     fn encode_inner<T: ZByteWriterTrait>(
-        &mut self, image: &Image, sink: T
+        &mut self, image: &Image, sink: T,
     ) -> Result<usize, ImageErrors> {
         let options = create_options_for_encoder(self.options, image);
 
@@ -87,7 +87,7 @@ impl EncoderTrait for JxlEncoder {
             ColorSpace::Luma,
             ColorSpace::LumaA,
             ColorSpace::RGBA,
-            ColorSpace::RGB
+            ColorSpace::RGB,
         ]
     }
 
@@ -102,7 +102,7 @@ impl EncoderTrait for JxlEncoder {
     fn default_depth(&self, depth: BitDepth) -> BitDepth {
         match depth {
             BitDepth::Sixteen | BitDepth::Float32 => BitDepth::Sixteen,
-            _ => BitDepth::Eight
+            _ => BitDepth::Eight,
         }
     }
 
@@ -118,8 +118,8 @@ impl From<JxlEncodeErrors> for ImgEncodeErrors {
 }
 
 pub struct JxlDecoder {
-    inner:   jxl_oxide::JxlImage,
-    options: DecoderOptions
+    inner: jxl_oxide::JxlImage,
+    options: DecoderOptions,
 }
 
 impl JxlDecoder {
@@ -130,7 +130,7 @@ impl JxlDecoder {
 
         let decoder = JxlDecoder {
             inner: parser,
-            options
+            options,
         };
         Ok(decoder)
     }
@@ -192,7 +192,7 @@ impl DecoderTrait for JxlDecoder {
             for channel in im_plannar {
                 let mut chan = Channel::new_with_bit_type(
                     channel.width() * channel.height() * size_of::<f32>(),
-                    BitType::F32
+                    BitType::F32,
                 );
                 // copy the channel as plannar
                 let c = chan.reinterpret_as_mut()?;
@@ -224,7 +224,7 @@ impl DecoderTrait for JxlDecoder {
             PixelFormat::Rgb => ColorSpace::RGB,
             PixelFormat::Rgba => ColorSpace::RGBA,
             PixelFormat::Cmyk => ColorSpace::CMYK,
-            PixelFormat::Cmyka => ColorSpace::Unknown
+            PixelFormat::Cmyka => ColorSpace::Unknown,
         }
     }
 

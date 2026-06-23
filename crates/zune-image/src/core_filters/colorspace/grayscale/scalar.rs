@@ -8,7 +8,7 @@
 
 #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
 pub(crate) fn convert_rgb_to_grayscale_scalar(
-    r: &[u8], g: &[u8], b: &[u8], gr: &mut [u8], max_value: u8
+    r: &[u8], g: &[u8], b: &[u8], gr: &mut [u8], max_value: u8,
 ) {
     let max_value = u32::from(max_value);
 
@@ -42,7 +42,7 @@ pub(crate) fn convert_rgb_to_grayscale_scalar(
     clippy::unreadable_literal
 )]
 pub(crate) fn convert_rgb_to_grayscale_scalar_u16(
-    r: &[u16], g: &[u16], b: &[u16], gr: &mut [u16], max_value: u16
+    r: &[u16], g: &[u16], b: &[u16], gr: &mut [u16], max_value: u16,
 ) {
     let max_value = u64::from(max_value);
 
@@ -67,7 +67,7 @@ pub(crate) fn convert_rgb_to_grayscale_scalar_u16(
 }
 
 pub(crate) fn convert_rgb_to_grayscale_scalar_f32(
-    r: &[f32], g: &[f32], b: &[f32], gr: &mut [f32], _max_value: f32
+    r: &[f32], g: &[f32], b: &[f32], gr: &mut [f32], _max_value: f32,
 ) {
     /*
      * The algorithm assigns different weights to colors

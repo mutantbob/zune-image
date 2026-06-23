@@ -75,7 +75,7 @@ fn hsl_to_rgb_inner(h: f32, s: f32, l: f32) -> [f32; 3] {
     [
         v(m1, m2, h + ONE_THIRD),
         v(m1, m2, h),
-        v(m1, m2, h - ONE_THIRD)
+        v(m1, m2, h - ONE_THIRD),
     ]
 }
 

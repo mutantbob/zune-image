@@ -140,10 +140,10 @@ pub fn probe_bmp(bytes: &[u8]) -> bool {
 /// For some configurations, alpha is disabled,
 #[derive(Clone, Copy, Default, Debug)]
 struct PaletteEntry {
-    red:   u8,
+    red: u8,
     green: u8,
-    blue:  u8,
-    alpha: u8
+    blue: u8,
+    alpha: u8,
 }
 
 /// A BMP decoder.
@@ -191,23 +191,23 @@ struct PaletteEntry {
 /// ```
 pub struct BmpDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
-    bytes:                ZReader<T>,
-    options:              DecoderOptions,
-    width:                usize,
-    height:               usize,
-    flip_vertically:      bool,
-    rgb_bitfields:        [u32; 4],
-    decoded_headers:      bool,
-    pix_fmt:              BmpPixelFormat,
-    comp:                 BmpCompression,
-    ihszie:               u32,
-    hsize:                u32,
-    palette:              Vec<PaletteEntry>,
-    depth:                u16,
-    is_alpha:             bool,
-    palette_numbers:      usize,
+    bytes: ZReader<T>,
+    options: DecoderOptions,
+    width: usize,
+    height: usize,
+    flip_vertically: bool,
+    rgb_bitfields: [u32; 4],
+    decoded_headers: bool,
+    pix_fmt: BmpPixelFormat,
+    comp: BmpCompression,
+    ihszie: u32,
+    hsize: u32,
+    palette: Vec<PaletteEntry>,
+    depth: u16,
+    is_alpha: bool,
+    palette_numbers: usize,
     /// Convert RGBA layout to BGRA
     /// We can do this cheaply (depends on what you consider cheap)
     /// but this requires the rgb_inverse feature
@@ -218,16 +218,16 @@ where
     ///
     /// Some passes may directly output bgra, but others don't (e.g palette),
     /// so for now we handle those paths separately
-    image_in_bgra:        bool,
+    image_in_bgra: bool,
     /// The bytes of an ICC embedded profile if it exists
-    icc_bytes:            Option<Vec<u8>>,
+    icc_bytes: Option<Vec<u8>>,
     /// Color primaries if present
-    color_primaries:      Option<ColorPrimaries>
+    color_primaries: Option<ColorPrimaries>,
 }
 
 impl<T> BmpDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     /// Create a new bmp decoder that reads data from
     /// `data`
@@ -269,7 +269,7 @@ where
             convert_rgba_to_bgra: false,
             image_in_bgra: false,
             icc_bytes: None,
-            color_primaries: None
+            color_primaries: None,
         }
     }
 
@@ -282,7 +282,7 @@ where
     /// # Returns
     /// - Ok(()) Indicates everything was okay during header parsing
     /// - Err: Error that occurred when decoding headers
-    #[allow(unused_assignments,unused_variables)]
+    #[allow(unused_assignments, unused_variables)]
     pub fn decode_headers(&mut self) -> Result<(), BmpDecoderErrors> {
         if self.decoded_headers {
             return Ok(());
@@ -325,7 +325,7 @@ where
                         Some(c) => c,
                         None => {
                             return Err(BmpDecoderErrors::GenericStatic(
-                                "Unsupported BMP compression scheme"
+                                "Unsupported BMP compression scheme",
                             ));
                         }
                     }
@@ -409,7 +409,7 @@ where
 
                         let icc_bytes = self.bytes.peek_at(
                             (true_position.saturating_sub(current_pos)) as usize,
-                            profile_size as usize
+                            profile_size as usize,
                         );
                         match icc_bytes {
                             Ok(bytes) => {
@@ -440,7 +440,7 @@ where
 
             _ => {
                 return Err(BmpDecoderErrors::GenericStatic(
-                    "Unknown information header size"
+                    "Unknown information header size",
                 ));
             }
         }
@@ -453,24 +453,24 @@ where
             return Err(BmpDecoderErrors::TooLargeDimensions(
                 "height",
                 self.options.max_height(),
-                self.height
+                self.height,
             ));
         }
         if self.width > self.options.max_width() {
             return Err(BmpDecoderErrors::TooLargeDimensions(
                 "width",
                 self.options.max_width(),
-                self.width
+                self.width,
             ));
         }
         if self.width == 0 {
             return Err(BmpDecoderErrors::GenericStatic(
-                "Width is zero, invalid image"
+                "Width is zero, invalid image",
             ));
         }
         if self.height == 0 {
             return Err(BmpDecoderErrors::GenericStatic(
-                "Height is zero, invalid image"
+                "Height is zero, invalid image",
             ));
         }
 
@@ -479,7 +479,7 @@ where
 
         if bpp == 0 {
             return Err(BmpDecoderErrors::GenericStatic(
-                "Depth is zero, invalid image"
+                "Depth is zero, invalid image",
             ));
         }
 
@@ -653,7 +653,7 @@ where
                 BmpPixelFormat::RGBA => ColorSpace::BGRA,
                 BmpPixelFormat::PAL8 => ColorSpace::BGR,
                 BmpPixelFormat::GRAY8 => ColorSpace::Luma,
-                BmpPixelFormat::RGB => ColorSpace::BGR
+                BmpPixelFormat::RGB => ColorSpace::BGR,
             });
         }
         Some(self.pix_fmt.into_colorspace())
@@ -726,7 +726,7 @@ where
     /// - If `PRESERVE_BGRA` is false, data is in rgb(a) format
     /// - If `PRESERVE_RGBA` is true, data is in bgr(a) format
     fn decode_into_inner<const PRESERVE_BGRA: bool>(
-        &mut self, buf: &mut [u8]
+        &mut self, buf: &mut [u8],
     ) -> Result<(), BmpDecoderErrors> {
         self.decode_headers()?;
 
@@ -879,7 +879,7 @@ where
                                             .take(input_bytes_per_width)
                                         {
                                             let v = u32::from(u16::from_le_bytes(
-                                                self.bytes.read_fixed_bytes_or_zero::<2>()
+                                                self.bytes.read_fixed_bytes_or_zero::<2>(),
                                             ));
                                             count += 2;
 
@@ -931,7 +931,7 @@ where
                     // to bytes and then read palette entries
                     if self.pix_fmt != BmpPixelFormat::PAL8 {
                         return Err(BmpDecoderErrors::GenericStatic(
-                            "Bit Depths less than 8 must have a palette"
+                            "Bit Depths less than 8 must have a palette",
                         ));
                     }
                     let width_bytes = ((self.width + 7) >> 3) << 3;
@@ -954,13 +954,13 @@ where
                             self.depth as usize,
                             true,
                             &in_width_buf,
-                            &mut scanline_bytes
+                            &mut scanline_bytes,
                         );
                         self.expand_palette(&scanline_bytes, out_bytes, true);
                     }
                     self.flip_vertically ^= true;
                 }
-                d => unreachable!("Unhandled depth {}", d)
+                d => unreachable!("Unhandled depth {}", d),
             }
         }
         // The code for flip uses xor, so that if the image was to be flipped
@@ -1016,7 +1016,7 @@ where
                         pix.swap(0, 2);
                     }
                 }
-                _ => error!("Unhandled pixel format")
+                _ => error!("Unhandled pixel format"),
             }
             self.image_in_bgra = true;
         }
@@ -1075,7 +1075,7 @@ where
     }
     // RUST borrowing rules
     fn expand_palette_from_remaining_bytes(
-        &mut self, buf: &mut [u8], unpad: bool
+        &mut self, buf: &mut [u8], unpad: bool,
     ) -> Result<(), ZByteIoError> {
         //let in_bytes = self.bytes.remaining_bytes()?;
         let palette: &[PaletteEntry; 256] = &self.palette[0..256].try_into().unwrap();
@@ -1415,7 +1415,7 @@ where
                                 .for_each(|x| x[0..4].copy_from_slice(&pix[..4]));
                             pos += 4 * usize::from(p1);
                         }
-                        _ => unreachable!("Uhh ohh")
+                        _ => unreachable!("Uhh ohh"),
                     }
                 }
             }
@@ -1435,7 +1435,7 @@ fn shift_signed(mut v: u32, shift: i32, mut bits: u32) -> u32 {
         0x21, /*0b00100001*/
         0x41, /*0b01000001*/
         0x81, /*0b10000001*/
-        0x01  /*0b00000001*/
+        0x01, /*0b00000001*/
     ];
     const SHIFT_TABLE: [i32; 9] = [0, 0, 0, 1, 0, 2, 4, 6, 0];
 

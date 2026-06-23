@@ -38,7 +38,7 @@ pub enum ImageErrors {
     ImageDecoderNotIncluded(ImageFormat),
     ImageDecoderNotImplemented(ImageFormat),
     IoError(std::io::Error),
-    ImageOperationNotImplemented(&'static str, BitType)
+    ImageOperationNotImplemented(&'static str, BitType),
 }
 
 /// Errors that may occur during image operations
@@ -56,7 +56,7 @@ pub enum ImageOperationsErrors {
     /// Generic errors
     Generic(&'static str),
     /// Generic errors which have more context
-    GenericString(String)
+    GenericString(String),
 }
 
 /// All errors possible during image encoding
@@ -65,7 +65,7 @@ pub enum ImgEncodeErrors {
     GenericStatic(&'static str),
     UnsupportedColorspace(ColorSpace, &'static [ColorSpace]),
     ImageEncodeErrors(String),
-    NoEncoderForFormat(ImageFormat)
+    NoEncoderForFormat(ImageFormat),
 }
 
 impl Debug for ImageErrors {

@@ -20,9 +20,9 @@ use crate::gaussian_blur::{gaussian_blur_u16, gaussian_blur_u8};
 /// perform the mask calculation
 #[derive(Default)]
 pub struct Unsharpen {
-    sigma:      f32,
-    threshold:  u16,
-    percentage: u8
+    sigma: f32,
+    threshold: u16,
+    percentage: u8,
 }
 
 impl Unsharpen {
@@ -41,7 +41,7 @@ impl Unsharpen {
         Unsharpen {
             sigma,
             threshold,
-            percentage
+            percentage,
         }
     }
 }
@@ -74,7 +74,7 @@ impl OperationsTrait for Unsharpen {
                             self.threshold,
                             self.percentage as u16,
                             width,
-                            height
+                            height,
                         );
                     }
                 }
@@ -92,11 +92,11 @@ impl OperationsTrait for Unsharpen {
                             self.threshold as u8,
                             self.percentage,
                             width,
-                            height
+                            height,
                         );
                     }
                 }
-                d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d))
+                d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d)),
             }
         }
         #[cfg(feature = "threads")]
@@ -119,7 +119,7 @@ impl OperationsTrait for Unsharpen {
                                 self.threshold,
                                 u16::from(self.percentage),
                                 width,
-                                height
+                                height,
                             );
                             Ok(())
                         }
@@ -136,11 +136,11 @@ impl OperationsTrait for Unsharpen {
                                 u8::try_from(self.threshold.clamp(0, 255)).unwrap_or(u8::MAX),
                                 self.percentage,
                                 width,
-                                height
+                                height,
                             );
                             Ok(())
                         }
-                        d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d))
+                        d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d)),
                     });
                     errors.push(result);
                 }
@@ -181,7 +181,7 @@ impl OperationsTrait for Unsharpen {
 #[allow(clippy::too_many_arguments)]
 pub fn unsharpen_u16(
     channel: &mut [u16], blur_buffer: &mut [u16], blur_scratch_buffer: &mut [u16], sigma: f32,
-    threshold: u16, _percentage: u16, width: usize, height: usize
+    threshold: u16, _percentage: u16, width: usize, height: usize,
 ) {
     // copy channel to scratch space
     blur_buffer.copy_from_slice(channel);
@@ -229,7 +229,7 @@ pub fn unsharpen_u16(
 #[allow(clippy::too_many_arguments)]
 pub fn unsharpen_u8(
     channel: &mut [u8], blur_buffer: &mut [u8], blur_scratch_buffer: &mut [u8], sigma: f32,
-    threshold: u8, _percentage: u8, width: usize, height: usize
+    threshold: u8, _percentage: u8, width: usize, height: usize,
 ) {
     // copy channel to scratch space
     blur_buffer.copy_from_slice(channel);

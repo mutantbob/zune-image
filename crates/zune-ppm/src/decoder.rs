@@ -23,15 +23,15 @@ use zune_core::result::DecodingResult;
 /// The decoder can currently decode P5 and P6 formats
 pub struct PPMDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
-    width:           usize,
-    height:          usize,
+    width: usize,
+    height: usize,
     decoded_headers: bool,
-    reader:          ZReader<T>,
-    colorspace:      ColorSpace,
-    bit_depth:       BitDepth,
-    options:         DecoderOptions
+    reader: ZReader<T>,
+    colorspace: ColorSpace,
+    bit_depth: BitDepth,
+    options: DecoderOptions,
 }
 
 /// Decoding errors that may occur
@@ -46,7 +46,7 @@ pub enum PPMDecodeErrors {
     /// The PPM file in question has larger dimensions(width,height)
     /// than the accepted one
     LargeDimensions(usize, usize),
-    IoErrors(ZByteIoError)
+    IoErrors(ZByteIoError),
 }
 impl From<ZByteIoError> for PPMDecodeErrors {
     fn from(value: ZByteIoError) -> Self {
@@ -82,7 +82,7 @@ impl Debug for PPMDecodeErrors {
 
 impl<T> PPMDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     /// Create a new ppm decoder with default options
     ///
@@ -124,7 +124,7 @@ where
             reader,
             colorspace: ColorSpace::Unknown,
             bit_depth: BitDepth::Eight,
-            options
+            options,
         }
     }
     /// Read PPM headers and store them in internal state
@@ -217,7 +217,7 @@ where
                     )))
                 }
             },
-            Err(_) => return Err(PPMDecodeErrors::GenericStatic("Invalid string"))
+            Err(_) => return Err(PPMDecodeErrors::GenericStatic("Invalid string")),
         };
         // " is a number used to indicate the byte order within the file.
         // A positive number (e.g. "1.0") indicates big-endian
@@ -261,7 +261,7 @@ where
                     if self.width > self.options.max_width() {
                         return Err(PPMDecodeErrors::LargeDimensions(
                             self.options.max_width(),
-                            self.width
+                            self.width,
                         ));
                     }
                     seen_width = true;
@@ -272,7 +272,7 @@ where
                     if self.height > self.options.max_height() {
                         return Err(PPMDecodeErrors::LargeDimensions(
                             self.options.max_height(),
-                            self.height
+                            self.height,
                         ));
                     }
 
@@ -344,7 +344,7 @@ where
         }
         if !seen_max_val || !seen_tuple_type || !seen_height || !seen_width || !seen_depth {
             return Err(PPMDecodeErrors::InvalidHeader(
-                "Not all expected headers were found".to_string()
+                "Not all expected headers were found".to_string(),
             ));
         }
 
@@ -362,7 +362,7 @@ where
         let colorspace = match version {
             b'5' => ColorSpace::Luma,
             b'6' => ColorSpace::RGB,
-            _ => unreachable!()
+            _ => unreachable!(),
         };
         trace!("Colorspace: {:?}", colorspace);
 
@@ -534,7 +534,7 @@ where
 
         if self.width == 0 || self.height == 0 {
             return Err(PPMDecodeErrors::GenericStatic(
-                "Zero dimensions not allowed"
+                "Zero dimensions not allowed",
             ));
         }
         // okay check if the stream is large enough for the bit depth
@@ -615,7 +615,7 @@ where
 
                 Ok(DecodingResult::F32(result))
             }
-            _ => unreachable!()
+            _ => unreachable!(),
         };
     }
 }
@@ -625,7 +625,7 @@ where
 /// we reach eof
 fn skip_spaces<T>(byte_stream: &mut ZReader<T>) -> Result<(), PPMDecodeErrors>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     while !byte_stream.eof()? {
         let mut byte = byte_stream.read_u8();
@@ -653,7 +653,7 @@ where
 /// # Panics
 /// If end < start
 fn get_bytes_until_whitespace<T: ZByteReaderTrait>(
-    z: &mut ZReader<T>, write_to: &mut Vec<u8>
+    z: &mut ZReader<T>, write_to: &mut Vec<u8>,
 ) -> Result<usize, PPMDecodeErrors> {
     let start = z.position()?;
     let mut end = start;

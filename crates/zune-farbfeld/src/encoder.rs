@@ -28,7 +28,7 @@ pub enum FarbFeldEncoderErrors {
     /// Too short of an input buffer, the buffer size is not same as expected buffer
     /// size
     TooShortInput(usize, usize),
-    IOErrors(ZByteIoError)
+    IOErrors(ZByteIoError),
 }
 
 impl Debug for FarbFeldEncoderErrors {
@@ -104,8 +104,8 @@ impl From<ZByteIoError> for FarbFeldEncoderErrors {
 /// FarbFeldEncoder::new(&alias,options).encode(&mut write_to).unwrap();
 /// ```
 pub struct FarbFeldEncoder<'a> {
-    data:    &'a [u8],
-    options: EncoderOptions
+    data: &'a [u8],
+    options: EncoderOptions,
 }
 
 impl<'a> FarbFeldEncoder<'a> {
@@ -121,7 +121,7 @@ impl<'a> FarbFeldEncoder<'a> {
     }
 
     fn encode_headers<T: ZByteWriterTrait>(
-        &self, stream: &mut ZWriter<T>
+        &self, stream: &mut ZWriter<T>,
     ) -> Result<(), FarbFeldEncoderErrors> {
         // these routines panic because I need them
         // to panic as it is a me problem
@@ -130,12 +130,12 @@ impl<'a> FarbFeldEncoder<'a> {
         if (self.options.width() as u64) > u64::from(u32::MAX) {
             // error out
             return Err(FarbFeldEncoderErrors::TooLargeDimensions(
-                self.options.width()
+                self.options.width(),
             ));
         }
         if (self.options.height() as u64) > u64::from(u32::MAX) {
             return Err(FarbFeldEncoderErrors::TooLargeDimensions(
-                self.options.height()
+                self.options.height(),
             ));
         }
         // dimensions
@@ -150,12 +150,12 @@ impl<'a> FarbFeldEncoder<'a> {
     pub fn encode<T: ZByteWriterTrait>(&self, sink: T) -> Result<usize, FarbFeldEncoderErrors> {
         if self.options.depth() != BitDepth::Sixteen {
             return Err(FarbFeldEncoderErrors::UnsupportedBitDepth(
-                self.options.depth()
+                self.options.depth(),
             ));
         }
         if self.options.colorspace() != ColorSpace::RGBA {
             return Err(FarbFeldEncoderErrors::UnsupportedColorSpace(
-                self.options.colorspace()
+                self.options.colorspace(),
             ));
         }
 

@@ -22,7 +22,7 @@ use core::ops::{Add, Shr, Sub};
 
 fn convert_rgb_to_ycocg<T>(r: T, g: T, b: T, y: &mut T, co: &mut T, cg: &mut T)
 where
-    T: Add<Output = T> + Sub<Output = T> + Shr<u8, Output = T> + Copy
+    T: Add<Output = T> + Sub<Output = T> + Shr<u8, Output = T> + Copy,
 {
     *co = r - b;
     let tmp = b + (*co >> 1);
@@ -32,7 +32,7 @@ where
 
 pub fn fill_row_g8<T>(pixels: &[u8], oxs: usize, luma: &mut [T])
 where
-    T: From<u8>
+    T: From<u8>,
 {
     for (rg, lm) in pixels.iter().zip(luma).take(oxs) {
         *lm = T::from(*rg);
@@ -41,25 +41,24 @@ where
 
 pub fn fill_row_g16<T>(pixels: &[u8], oxs: usize, luma: &mut [T])
 where
-    T: TryFrom<u16>
-
+    T: TryFrom<u16>,
 {
     for (rg, lm) in pixels.chunks_exact(2).zip(luma).take(oxs) {
         let value = u16::from_ne_bytes([rg[0], rg[1]]);
-        if let Ok(c) =T::try_from(value) {
+        if let Ok(c) = T::try_from(value) {
             // ps, this should always be true,
             // since this is called using i32 Pixel
             // But traits are hard...
             *lm = c;
-        } else{
-            debug_assert!(false,"Conversion failed")
+        } else {
+            debug_assert!(false, "Conversion failed")
         }
     }
 }
 
 pub fn fill_row_ga8<T>(pixels: &[u8], oxs: usize, luma: &mut [T], alpha: &mut [T])
 where
-    T: From<u8>
+    T: From<u8>,
 {
     for ((rg, lm), am) in pixels.chunks_exact(2).zip(luma).zip(alpha).take(oxs) {
         *lm = T::from(rg[0]);
@@ -69,7 +68,7 @@ where
 
 pub fn fill_row_ga16<T>(pixels: &[u8], oxs: usize, luma: &mut [T], alpha: &mut [T])
 where
-    T: From<i16>
+    T: From<i16>,
 {
     for ((rg, lm), am) in pixels.chunks_exact(4).zip(luma).zip(alpha).take(oxs) {
         let luma_bits = i16::from_ne_bytes([rg[0], rg[1]]);
@@ -82,7 +81,7 @@ where
 
 pub fn fill_row_rgb8<T>(pixels: &[u8], oxs: usize, y: &mut [T], co: &mut [T], cg: &mut [T])
 where
-    T: Add<Output = T> + Sub<Output = T> + Shr<u8, Output = T> + Copy + From<u8>
+    T: Add<Output = T> + Sub<Output = T> + Shr<u8, Output = T> + Copy + From<u8>,
 {
     for (((rgb, y), co), cg) in pixels.chunks_exact(3).take(oxs).zip(y).zip(co).zip(cg) {
         let r = rgb[0].into();
@@ -101,7 +100,7 @@ where
         + Copy
         + Into<i32>
         + TryFrom<i32>
-        + Default
+        + Default,
 {
     for (((rgb, y), co), cg) in pixels.chunks_exact(6).take(oxs).zip(y).zip(co).zip(cg) {
         let r = u16::from_ne_bytes([rgb[0], rgb[1]]).into();
@@ -121,9 +120,9 @@ where
 }
 
 pub fn fill_row_rgba8<T>(
-    pixels: &[u8], oxs: usize, y: &mut [T], co: &mut [T], cg: &mut [T], alpha: &mut [T]
+    pixels: &[u8], oxs: usize, y: &mut [T], co: &mut [T], cg: &mut [T], alpha: &mut [T],
 ) where
-    T: Add<Output = T> + Sub<Output = T> + Shr<u8, Output = T> + Copy + From<u8>
+    T: Add<Output = T> + Sub<Output = T> + Shr<u8, Output = T> + Copy + From<u8>,
 {
     for ((((rgb, y), co), cg), a) in pixels
         .chunks_exact(4)
@@ -143,7 +142,7 @@ pub fn fill_row_rgba8<T>(
 }
 
 pub fn fill_row_rgba16<T>(
-    pixels: &[u8], oxs: usize, y: &mut [T], co: &mut [T], cg: &mut [T], alpha: &mut [T]
+    pixels: &[u8], oxs: usize, y: &mut [T], co: &mut [T], cg: &mut [T], alpha: &mut [T],
 ) where
     T: Add<Output = T>
         + Sub<Output = T>
@@ -151,7 +150,7 @@ pub fn fill_row_rgba16<T>(
         + Copy
         + Into<i32>
         + TryFrom<i32>
-        + Default
+        + Default,
 {
     for ((((rgb, y), co), cg), ca) in pixels
         .chunks_exact(8)

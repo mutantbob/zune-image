@@ -45,7 +45,7 @@ pub fn get_rotated_dimensions(width: usize, height: usize, angle: f32) -> (usize
 }
 
 pub struct Rotate {
-    angle: f32
+    angle: f32,
 }
 
 impl Rotate {
@@ -82,7 +82,7 @@ impl OperationsTrait for Rotate {
                         new_width,
                         new_height,
                         channel.reinterpret_as()?,
-                        new_channel.reinterpret_as_mut()?
+                        new_channel.reinterpret_as_mut()?,
                     );
                 }
                 BitType::U16 => {
@@ -93,7 +93,7 @@ impl OperationsTrait for Rotate {
                         new_width,
                         new_height,
                         channel.reinterpret_as()?,
-                        new_channel.reinterpret_as_mut()?
+                        new_channel.reinterpret_as_mut()?,
                     );
                 }
                 BitType::F32 => rotate::<f32>(
@@ -103,9 +103,9 @@ impl OperationsTrait for Rotate {
                     new_width,
                     new_height,
                     channel.reinterpret_as()?,
-                    new_channel.reinterpret_as_mut()?
+                    new_channel.reinterpret_as_mut()?,
                 ),
-                d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d))
+                d => return Err(ImageErrors::ImageOperationNotImplemented(self.name(), d)),
             };
             *channel = new_channel;
             Ok(())
@@ -145,7 +145,7 @@ fn change_image_dims(image: &mut Image, angle: f32) {
 
 pub fn rotate<T: Copy + NumOps<T> + Default>(
     angle: f32, width: usize, height: usize, out_width: usize, out_height: usize, in_image: &[T],
-    out_image: &mut [T]
+    out_image: &mut [T],
 ) {
     let angle = angle % 360.0;
 
@@ -159,7 +159,7 @@ pub fn rotate<T: Copy + NumOps<T> + Default>(
         rotate_270(in_image, out_image, width, height);
     } else {
         rotate_arbitrary(
-            in_image, out_image, width, height, out_width, out_height, angle
+            in_image, out_image, width, height, out_width, out_height, angle,
         )
     }
 }
@@ -180,7 +180,7 @@ fn rotate_180<T: Copy>(in_out_image: &mut [T], width: usize) {
 
 fn rotate_arbitrary<T: Copy + Default + NumOps<T>>(
     in_image: &[T], out_image: &mut [T], in_width: usize, in_height: usize, out_width: usize,
-    out_height: usize, angle: f32
+    out_height: usize, angle: f32,
 ) {
     let angle_rad = angle.to_radians();
     let cos_a = angle_rad.cos();

@@ -4,7 +4,7 @@ pub(crate) enum DisposalMethod {
     None = 0,
     InPlace = 1,
     Background = 2,
-    Restore = 3
+    Restore = 3,
 }
 
 impl DisposalMethod {
@@ -13,7 +13,7 @@ impl DisposalMethod {
             1 => DisposalMethod::InPlace,
             2 => DisposalMethod::Background,
             3 => DisposalMethod::Restore,
-            _ => DisposalMethod::None
+            _ => DisposalMethod::None,
         }
     }
 }

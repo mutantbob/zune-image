@@ -40,22 +40,22 @@ use crate::errors::PSDDecodeErrors;
 /// image pixels. But for now this is a good basis.
 pub struct PSDDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
-    width:          usize,
-    height:         usize,
+    width: usize,
+    height: usize,
     decoded_header: bool,
-    stream:         ZReader<T>,
-    options:        DecoderOptions,
-    depth:          BitDepth,
-    color_type:     Option<ColorModes>,
-    compression:    CompressionMethod,
-    channel_count:  usize
+    stream: ZReader<T>,
+    options: DecoderOptions,
+    depth: BitDepth,
+    color_type: Option<ColorModes>,
+    compression: CompressionMethod,
+    channel_count: usize,
 }
 
 impl<T> PSDDecoder<T>
 where
-    T: ZByteReaderTrait
+    T: ZByteReaderTrait,
 {
     /// Create a new decoder that reads a photoshop encoded file
     /// from `T` and returns pixels
@@ -81,7 +81,7 @@ where
             depth: BitDepth::Eight,
             color_type: None,
             compression: CompressionMethod::NoCompression,
-            channel_count: 0
+            channel_count: 0,
         }
     }
 
@@ -124,14 +124,14 @@ where
         if width > self.options.max_width() {
             return Err(PSDDecodeErrors::LargeDimensions(
                 self.options.max_width(),
-                width
+                width,
             ));
         }
 
         if height > self.options.max_height() {
             return Err(PSDDecodeErrors::LargeDimensions(
                 self.options.max_height(),
-                height
+                height,
             ));
         }
 
@@ -150,7 +150,7 @@ where
         let im_depth = match depth {
             8 => BitDepth::Eight,
             16 => BitDepth::Sixteen,
-            _ => unreachable!()
+            _ => unreachable!(),
         };
 
         self.depth = im_depth;
@@ -309,7 +309,7 @@ where
                 out_channel.truncate(pixel_count * self.channel_count);
                 out_channel
             }
-            _ => return Err(PSDDecodeErrors::Generic("Not implemented or Unknown"))
+            _ => return Err(PSDDecodeErrors::Generic("Not implemented or Unknown")),
         };
         // remove white matte from psd
         if self.channel_count >= 4 {
@@ -348,7 +348,7 @@ where
                         }
                     }
                 }
-                _ => unreachable!()
+                _ => unreachable!(),
             }
         }
         Ok(result)
@@ -382,7 +382,7 @@ where
     }
 
     fn psd_decode_rle(
-        &mut self, pixel_count: usize, buffer: &mut [u8]
+        &mut self, pixel_count: usize, buffer: &mut [u8],
     ) -> Result<(), PSDDecodeErrors> {
         let mut count = 0;
         let mut nleft = pixel_count - count;

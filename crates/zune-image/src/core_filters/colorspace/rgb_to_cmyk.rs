@@ -121,7 +121,7 @@ pub fn rgb_to_cmyk_u16(r_to_c: &mut [u16], g_to_m: &mut [u16], b_to_y: &mut [u16
         let result = rgb_to_cmyk_inner_f32(
             f32::from(*r_c) * inv,
             f32::from(*g_m) * inv,
-            f32::from(*b_y) * inv
+            f32::from(*b_y) * inv,
         );
         *r_c = (result[0] * v) as u16;
         *g_m = (result[1] * v) as u16;

@@ -24,7 +24,7 @@ use crate::core_filters::colorspace::conversion_functions::{
     convert_adding_opaque_alpha, convert_cmyk_to_rgb, convert_hsl_to_rgb, convert_hsv_to_rgb,
     convert_luma_to_rgb, convert_rgb_bgr, convert_rgb_to_argb, convert_rgb_to_cmyk,
     convert_rgb_to_grayscale, convert_rgb_to_hsl, convert_rgb_to_hsv,
-    convert_rgba_to_argb_or_vice_versa, pop_channel
+    convert_rgba_to_argb_or_vice_versa, pop_channel,
 };
 use crate::errors::ImageErrors;
 use crate::image::Image;
@@ -49,7 +49,7 @@ mod tests;
 /// This filter can also be accessed via
 /// [`image.convert_color()`](crate::image::Image::convert_color)
 pub struct ColorspaceConv {
-    to: ColorSpace
+    to: ColorSpace,
 }
 
 impl ColorspaceConv {
