@@ -172,6 +172,8 @@ pub use zune_core;
 pub use crate::components::SampleRatios;
 pub use crate::decoder::{ImageInfo, JpegDecoder};
 pub use crate::marker::Marker;
+pub use crate::mcu::{PixelBlock, RowSink};
+
 mod bitstream;
 mod color_convert;
 mod components;

@@ -15,7 +15,7 @@ use alloc::{format, vec};
 
 use zune_core::bytestream::{ZByteReaderTrait, ZReader};
 use zune_core::colorspace::ColorSpace;
-use zune_core::log::{error, info, trace, warn};
+use zune_core::log::{error, trace, warn};
 use zune_core::options::DecoderOptions;
 
 use crate::color_convert::choose_ycbcr_to_rgb_convert_func;
@@ -845,7 +845,23 @@ where
         if self.is_progressive {
             self.decode_mcu_ycbcr_progressive(out)
         } else {
-            self.decode_mcu_ycbcr_baseline(out)
+            self.decode_mcu_ycbcr_baseline(|bytes_per_pixel_row| {
+                crate::mcu::MondoRowSink::new(out, bytes_per_pixel_row)
+            })
+        }
+    }
+
+    pub fn decode_into_callback<RS: crate::mcu::RowSink>(
+        &mut self, row_sink_builder: impl FnOnce(usize) -> RS,
+    ) -> Result<(), DecodeErrors> {
+        self.decode_headers_internal()?;
+
+        if self.is_progressive {
+            Err(DecodeErrors::Format(
+                "progressive not supported by decode_into_callback".to_string(),
+            ))
+        } else {
+            self.decode_mcu_ycbcr_baseline(row_sink_builder)
         }
     }
 

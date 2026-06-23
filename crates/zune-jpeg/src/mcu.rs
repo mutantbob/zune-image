@@ -29,45 +29,67 @@ use crate::JpegDecoder;
 
 pub const DCT_BLOCK: usize = 64;
 
-struct RowSink<'a> {
-    pixels: &'a mut [u8],
-    bytes_per_mcu_row: usize,
-    bytes_per_pixel_row: usize,
+//
+
+/// This API is straining my brain.  There may be lifetime subtleties that frustrate novel implementations.
+pub trait RowSink {
+    type PB<'b>: PixelBlock
+    where
+        Self: 'b;
+    fn get_block_rows<'b>(&'b mut self, y: usize, image_width: usize, nrows: usize)
+        -> Self::PB<'b>;
 }
 
-impl<'a> RowSink<'a> {
-    fn new(pixels: &'a mut [u8], bytes_per_mcu_row: usize, bytes_per_pixel_row: usize) -> Self {
-        RowSink {
+pub trait PixelBlock {
+    fn pixel_bytes(&mut self) -> &mut [u8];
+
+    fn finish(self);
+}
+
+//
+
+pub struct MondoRowSink<'a> {
+    pixels: &'a mut [u8],
+    /// this is about 1 or 2 rows, depending on the pixel format and chroma subsampling
+    bytes_per_pseudo_row: usize,
+}
+
+impl<'a> MondoRowSink<'a> {
+    pub fn new(pixels: &'a mut [u8], bytes_per_pixel_row: usize) -> Self {
+        Self {
             pixels,
-            bytes_per_mcu_row,
-            bytes_per_pixel_row,
+            bytes_per_pseudo_row: bytes_per_pixel_row,
         }
     }
+}
 
-    fn get_block_row(&mut self, i: usize) -> &mut [u8] {
-        let start = i * self.bytes_per_mcu_row;
-        let end = (start + self.bytes_per_mcu_row).min(self.pixels.len());
-        &mut self.pixels[start..end]
-    }
-
-    fn get_block_row_2<'b>(&'b mut self, y: usize, nrows: usize) -> PixelBlock<'b>
+impl<'a> RowSink for MondoRowSink<'a> {
+    type PB<'b>
+        = MondoPixelBlock<'b>
     where
-        'a: 'b,
-    {
-        let start = y * self.bytes_per_pixel_row;
-        let end = ((y + nrows) * self.bytes_per_pixel_row).min(self.pixels.len());
-        PixelBlock {
+        Self: 'b;
+
+    fn get_block_rows<'b>(
+        &'b mut self, y: usize, _image_width: usize, nrows: usize,
+    ) -> Self::PB<'b> {
+        let start = y * self.bytes_per_pseudo_row;
+        let end = ((y + nrows) * self.bytes_per_pseudo_row).min(self.pixels.len());
+        MondoPixelBlock {
             pixels: &mut self.pixels[start..end],
         }
     }
 }
 
-struct PixelBlock<'a> {
+pub struct MondoPixelBlock<'a> {
     pub pixels: &'a mut [u8],
 }
 
-impl<'a> PixelBlock<'a> {
-    fn finish(&mut self) {}
+impl<'a> PixelBlock for MondoPixelBlock<'a> {
+    fn pixel_bytes(&mut self) -> &mut [u8] {
+        self.pixels
+    }
+
+    fn finish(self) {}
 }
 
 //
@@ -128,8 +150,8 @@ impl<T: ZByteReaderTrait> JpegDecoder<T> {
         clippy::cast_possible_truncation
     )]
     #[inline(never)]
-    pub(crate) fn decode_mcu_ycbcr_baseline(
-        &mut self, pixels: &mut [u8],
+    pub(crate) fn decode_mcu_ycbcr_baseline<RS: RowSink>(
+        &mut self, row_sink_builder: impl FnOnce(usize) -> RS,
     ) -> Result<(), DecodeErrors> {
         setup_component_params(self)?;
 
@@ -183,9 +205,8 @@ impl<T: ZByteReaderTrait> JpegDecoder<T> {
 
         let out_components = self.options.jpeg_get_out_colorspace().num_components();
         // let bytes_per_mcu_row = pixels.len() / mcu_height;
-        let bytes_per_pixel_row = width * self.coeff * out_components * self.v_max;
-        let bytes_per_mcu_row = 8 * bytes_per_pixel_row;
-        zune_core::log::info!("pixel bytes {}; mcu_height {mcu_height}; width {width}; coeff {}; components {out_components}; v_max {}",
+        let bytes_per_pixel_row = width * self.coeff * out_components;
+        /*   zune_core::log::info!("pixel bytes {}; mcu_height {mcu_height}; width {width}; coeff {}; components {out_components}; v_max {}",
             pixels.len(), self.coeff, self.v_max);
         zune_core::log::info!(
             "bytes_per_pixel_row {bytes_per_pixel_row}; bytes_per_mcu_row {bytes_per_mcu_row};"
@@ -195,9 +216,9 @@ impl<T: ZByteReaderTrait> JpegDecoder<T> {
             self.info.width,
             3 * self.info.width,
             bytes_per_pixel_row
-        );
+        );*/
 
-        let mut sink = RowSink::new(pixels, bytes_per_mcu_row, bytes_per_pixel_row);
+        let mut row_sink = row_sink_builder(bytes_per_pixel_row);
 
         let mut stream = BitStream::new();
         let mut tmp = [0_i32; DCT_BLOCK];
@@ -258,6 +279,17 @@ impl<T: ZByteReaderTrait> JpegDecoder<T> {
             * 8;
         let mut upsampler_scratch_space = vec![0; upsampler_scratch_size];
 
+        let v_max_ = self.v_max;
+        let emergency_fill_tail =
+            |sink: &mut RS, image_width: usize, height: usize, cursor: usize| {
+                let y = cursor / bytes_per_pixel_row;
+                (y..height/*self.info.height.into()*/).for_each(|j| {
+                    let mut block = sink.get_block_rows(j * v_max_, image_width, v_max_);
+                    block.pixel_bytes().fill(128);
+                    block.finish()
+                });
+            };
+
         'sos: loop {
             trace!(
                 "Baseline decoding of components: {:?}",
@@ -268,12 +300,12 @@ impl<T: ZByteReaderTrait> JpegDecoder<T> {
 
             for i in 0..mcu_height {
                 if stream.overread_by > 0 {
-                    let y = pixels_written / bytes_per_pixel_row;
-                    (y..self.info.height.into()).for_each(|j| {
-                        let mut block = sink.get_block_row_2(j, 1);
-                        block.pixels.fill(128);
-                        block.finish()
-                    });
+                    emergency_fill_tail(
+                        &mut row_sink,
+                        self.info.width.into(),
+                        self.info.height.into(),
+                        pixels_written,
+                    );
                     if self.options.strict_mode() {
                         return Err(DecodeErrors::FormatStatic("Premature end of buffer"));
                     };
@@ -323,9 +355,13 @@ impl<T: ZByteReaderTrait> JpegDecoder<T> {
                 // full components, which we skipped earlier.
                 if all_components_in_first_scan {
                     let mut row_pixels_written = 0usize;
-                    let mut row_block = sink.get_block_row_2(i * 8, 8);
+                    let mut row_block = row_sink.get_block_rows(
+                        i * 8 * self.v_max,
+                        self.info.width.into(),
+                        8 * self.v_max,
+                    );
                     self.post_process(
-                        row_block.pixels,
+                        row_block.pixel_bytes(),
                         i,
                         mcu_height,
                         width,
@@ -356,8 +392,12 @@ impl<T: ZByteReaderTrait> JpegDecoder<T> {
                     }
                     McuContinuation::Terminate => {
                         warn!("Got terminate signal, will not process further");
-                        (pixels_written / bytes_per_mcu_row..mcu_height)
-                            .for_each(|j| sink.get_block_row(j).fill(128));
+                        emergency_fill_tail(
+                            &mut row_sink,
+                            self.info.width.into(),
+                            self.info.height.into(),
+                            pixels_written,
+                        );
                         return Ok(());
                     }
                 }
@@ -370,7 +410,7 @@ impl<T: ZByteReaderTrait> JpegDecoder<T> {
 
         if !all_components_in_first_scan {
             panic!("Bob broke this code");
-            self.finish_baseline_decoding(&progressive_mcus, mcu_width, pixels)?;
+            // self.finish_baseline_decoding(&progressive_mcus, mcu_width, pixels)?;
         }
 
         // it may happen that some images don't have the whole buffer
