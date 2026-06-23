@@ -384,15 +384,15 @@ pub fn calculate_padded_width(actual_width: usize, sub_sample: SampleRatios) -> 
 //  segment to them, or else the decoder won't have any idea how to decompress the data.
 //  The exact table necessary is given in the OpenDML spec.""
 pub fn fill_default_mjpeg_tables(
-    is_progressive: bool, dc_huffman_tables: &mut [Option<HuffmanTable>],
-    ac_huffman_tables: &mut [Option<HuffmanTable>],
+    is_progressive: bool, dc_huffman_tables: &mut [Option<alloc::boxed::Box<HuffmanTable>>],
+    ac_huffman_tables: &mut [Option<alloc::boxed::Box<HuffmanTable>>],
 ) {
     // Section K.3.3
     trace!("Filling with default mjpeg tables");
 
     if dc_huffman_tables[0].is_none() {
         // Table K.3
-        dc_huffman_tables[0] = Some(
+        dc_huffman_tables[0] = Some(alloc::boxed::Box::new(
             HuffmanTable::new_unfilled(
                 &[
                     0x00, 0x00, 0x01, 0x05, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00,
@@ -405,11 +405,11 @@ pub fn fill_default_mjpeg_tables(
                 is_progressive,
             )
             .unwrap(),
-        );
+        ));
     }
     if dc_huffman_tables[1].is_none() {
         // Table K.4
-        dc_huffman_tables[1] = Some(
+        dc_huffman_tables[1] = Some(alloc::boxed::Box::new(
             HuffmanTable::new_unfilled(
                 &[
                     0x00, 0x00, 0x03, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00,
@@ -422,11 +422,11 @@ pub fn fill_default_mjpeg_tables(
                 is_progressive,
             )
             .unwrap(),
-        );
+        ));
     }
     if ac_huffman_tables[0].is_none() {
         // Table K.5
-        ac_huffman_tables[0] = Some(
+        ac_huffman_tables[0] = Some(alloc::boxed::Box::new(
             HuffmanTable::new_unfilled(
                 &[
                     0x00, 0x00, 0x02, 0x01, 0x03, 0x03, 0x02, 0x04, 0x03, 0x05, 0x05, 0x04, 0x04,
@@ -451,11 +451,11 @@ pub fn fill_default_mjpeg_tables(
                 is_progressive,
             )
             .unwrap(),
-        );
+        ));
     }
     if ac_huffman_tables[1].is_none() {
         // Table K.6
-        ac_huffman_tables[1] = Some(
+        ac_huffman_tables[1] = Some(alloc::boxed::Box::new(
             HuffmanTable::new_unfilled(
                 &[
                     0x00, 0x00, 0x02, 0x01, 0x02, 0x04, 0x04, 0x03, 0x04, 0x07, 0x05, 0x04, 0x04,
@@ -480,6 +480,6 @@ pub fn fill_default_mjpeg_tables(
                 is_progressive,
             )
             .unwrap(),
-        );
+        ));
     }
 }

@@ -15,7 +15,7 @@ use alloc::{format, vec};
 
 use zune_core::bytestream::{ZByteReaderTrait, ZReader};
 use zune_core::colorspace::ColorSpace;
-use zune_core::log::{error, trace, warn};
+use zune_core::log::{error, info, trace, warn};
 use zune_core::options::DecoderOptions;
 
 use crate::color_convert::choose_ycbcr_to_rgb_convert_func;
@@ -84,11 +84,11 @@ pub struct JpegDecoder<T> {
     pub(crate) info: ImageInfo,
     ///  Quantization tables, will be set to none and the tables will
     /// be moved to `components` field
-    pub(crate) qt_tables: [Option<[i32; 64]>; MAX_COMPONENTS],
+    pub(crate) qt_tables: Vec<Option<[i32; 64]>>,
     /// DC Huffman Tables with a maximum of 4 tables for each  component
-    pub(crate) dc_huffman_tables: [Option<HuffmanTable>; MAX_COMPONENTS],
+    pub(crate) dc_huffman_tables: Vec<Option<alloc::boxed::Box<HuffmanTable>>>,
     /// AC Huffman Tables with a maximum of 4 tables for each component
-    pub(crate) ac_huffman_tables: [Option<HuffmanTable>; MAX_COMPONENTS],
+    pub(crate) ac_huffman_tables: Vec<Option<alloc::boxed::Box<HuffmanTable>>>,
     /// Image components, holds information like DC prediction and quantization
     /// tables of a component
     pub(crate) components: Vec<Components>,
@@ -168,9 +168,9 @@ where
         let color_convert = choose_ycbcr_to_rgb_convert_func(ColorSpace::RGB, &options).unwrap();
         JpegDecoder {
             info: ImageInfo::default(),
-            qt_tables: [None, None, None, None],
-            dc_huffman_tables: [None, None, None, None],
-            ac_huffman_tables: [None, None, None, None],
+            qt_tables: (0..MAX_COMPONENTS).map(|_| None).collect(),
+            dc_huffman_tables: (0..MAX_COMPONENTS).map(|_| None).collect(),
+            ac_huffman_tables: (0..MAX_COMPONENTS).map(|_| None).collect(),
             components: vec![],
             // Interleaved information
             h_max: 1,
@@ -542,6 +542,9 @@ where
     }
     #[allow(clippy::too_many_lines)]
     pub(crate) fn parse_marker_inner(&mut self, m: Marker) -> Result<(), DecodeErrors> {
+        // info!("heap {}", esp_alloc::HEAP.stats());
+        // info!("marker {m:?}");
+
         match m {
             Marker::SOF(0..=2) => {
                 let marker = {

@@ -87,20 +87,20 @@ where
         // store
         match dc_or_ac {
             0 => {
-                decoder.dc_huffman_tables[index] = Some(HuffmanTable::new(
+                decoder.dc_huffman_tables[index] = Some(alloc::boxed::Box::new(HuffmanTable::new(
                     &num_symbols,
                     symbols,
                     true,
                     decoder.is_progressive,
-                )?);
+                )?));
             }
             _ => {
-                decoder.ac_huffman_tables[index] = Some(HuffmanTable::new(
+                decoder.ac_huffman_tables[index] = Some(alloc::boxed::Box::new(HuffmanTable::new(
                     &num_symbols,
                     symbols,
                     false,
                     decoder.is_progressive,
-                )?);
+                )?));
             }
         }
     }
