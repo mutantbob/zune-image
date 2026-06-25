@@ -34,11 +34,11 @@ pub struct HuffmanTable {
     /// top  bits above HUFF_LOOKAHEAD contain the code length.
     ///
     /// Lower (8) bits contain the symbol in order of increasing code length.
-    pub(crate) lookup: [i32; 1 << HUFF_LOOKAHEAD],
+    pub(crate) lookup: alloc::boxed::Box<[i32; 1 << HUFF_LOOKAHEAD]>,
 
     /// A table which can be used to decode small AC coefficients and
     /// do an equivalent of receive_extend
-    pub(crate) ac_lookup: Option<[i16; 1 << HUFF_LOOKAHEAD]>,
+    pub(crate) ac_lookup: Option<alloc::boxed::Box<[i16; 1 << HUFF_LOOKAHEAD]>>,
 
     /// Directly represent contents of a JPEG DHT marker
     ///
@@ -56,7 +56,7 @@ impl HuffmanTable {
         let mut p = HuffmanTable {
             maxcode: [0; 18],
             offset: [0; 18],
-            lookup: [too_long_code; 1 << HUFF_LOOKAHEAD],
+            lookup: alloc::boxed::Box::new([too_long_code; 1 << HUFF_LOOKAHEAD]),
             values,
             ac_lookup: None,
         };
@@ -201,7 +201,7 @@ impl HuffmanTable {
 
             // build a table that decodes both magnitude and value of small ACs in
             // one go.
-            let mut fast_ac = [0; 1 << HUFF_LOOKAHEAD];
+            let mut fast_ac = alloc::boxed::Box::new([0; 1 << HUFF_LOOKAHEAD]);
 
             for i in 0..(1 << HUFF_LOOKAHEAD) {
                 let fast_v = fast[i];
