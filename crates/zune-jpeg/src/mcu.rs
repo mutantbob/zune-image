@@ -268,6 +268,16 @@ impl<T: ZByteReaderTrait> JpegDecoder<T> {
 
         let mut pixels_written = 0;
 
+        // For vertically-sampled (e.g. 4:2:0) interleaved images, post_process defers
+        // v_max rows from each MCU block i to the start of block i+1.  This means:
+        //   - block 0 only writes (8 - 1) * v_max = 7*v_max rows, starting at y = 0
+        //   - block i >= 1 starts at y = i*8*v_max - v_max (the deferred rows come first)
+        // We compute this flag once so we can pass the correct y/nrows to get_block_rows.
+        let is_vertically_sampled = self
+            .components
+            .iter()
+            .any(|c| c.sample_ratio == SampleRatios::HV || c.sample_ratio == SampleRatios::V);
+
         let is_hv = usize::from(self.is_interleaved);
         let upsampler_scratch_size = is_hv
             * self
@@ -355,10 +365,25 @@ impl<T: ZByteReaderTrait> JpegDecoder<T> {
                 // full components, which we skipped earlier.
                 if all_components_in_first_scan {
                     let mut row_pixels_written = 0usize;
+                    let (sink_y, sink_nrows) = if self.is_interleaved && is_vertically_sampled {
+                        if i == 0 {
+                            // No deferred rows available yet; post_process writes 7*v_max rows.
+                            (0, 7 * self.v_max)
+                        } else if i == mcu_height - 1 {
+                            // Last block: v_max deferred rows + all 8*v_max main rows (none are
+                            // deferred to a nonexistent next block), so allocate 9*v_max rows.
+                            (i * 8 * self.v_max - self.v_max, 9 * self.v_max)
+                        } else {
+                            // Middle blocks: v_max deferred + 7*v_max main = 8*v_max total.
+                            (i * 8 * self.v_max - self.v_max, 8 * self.v_max)
+                        }
+                    } else {
+                        (i * 8 * self.v_max, 8 * self.v_max)
+                    };
                     let mut row_block = row_sink.get_block_rows(
-                        i * 8 * self.v_max,
+                        sink_y,
                         self.info.width.into(),
-                        8 * self.v_max,
+                        sink_nrows,
                     );
                     self.post_process(
                         row_block.pixel_bytes(),

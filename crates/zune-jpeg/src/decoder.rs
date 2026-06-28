@@ -540,6 +540,7 @@ where
         }
         // Check if image is RGB
     }
+
     #[allow(clippy::too_many_lines)]
     pub(crate) fn parse_marker_inner(&mut self, m: Marker) -> Result<(), DecodeErrors> {
         // info!("heap {}", esp_alloc::HEAP.stats());
