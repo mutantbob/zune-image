@@ -34,7 +34,7 @@ pub struct HuffmanTable {
     /// top  bits above HUFF_LOOKAHEAD contain the code length.
     ///
     /// Lower (8) bits contain the symbol in order of increasing code length.
-    pub(crate) lookup: alloc::boxed::Box<[i32; 1 << HUFF_LOOKAHEAD]>,
+    lookup_raw: alloc::boxed::Box<[i16; 1 << HUFF_LOOKAHEAD]>,
 
     /// A table which can be used to decode small AC coefficients and
     /// do an equivalent of receive_extend
@@ -52,11 +52,11 @@ impl HuffmanTable {
     pub fn new(
         codes: &[u8; 17], values: [u8; 256], is_dc: bool, is_progressive: bool,
     ) -> Result<HuffmanTable, DecodeErrors> {
-        let too_long_code = (i32::from(HUFF_LOOKAHEAD) + 1) << HUFF_LOOKAHEAD;
+        let too_long_code = (i16::from(HUFF_LOOKAHEAD) + 1) << HUFF_LOOKAHEAD;
         let mut p = HuffmanTable {
             maxcode: [0; 18],
             offset: [0; 18],
-            lookup: alloc::boxed::Box::new([too_long_code; 1 << HUFF_LOOKAHEAD]),
+            lookup_raw: alloc::boxed::Box::new([too_long_code; 1 << HUFF_LOOKAHEAD]),
             values,
             ac_lookup: None,
         };
@@ -74,6 +74,11 @@ impl HuffmanTable {
         let mut buf = [0; 256];
         buf[..values.len()].copy_from_slice(values);
         HuffmanTable::new(codes, buf, is_dc, is_progressive)
+    }
+
+    #[inline(always)]
+    pub(crate) fn lookup(&self, index: usize) -> i32 {
+        i32::from(self.lookup_raw[index])
     }
 
     /// Compute derived values for a Huffman table
@@ -172,8 +177,8 @@ impl HuffmanTable {
                 let mut look_bits = (huff_code[p] as usize) << (HUFF_LOOKAHEAD - l);
 
                 for _ in 0..1 << (HUFF_LOOKAHEAD - l) {
-                    self.lookup[look_bits] =
-                        (i32::from(l) << HUFF_LOOKAHEAD) | i32::from(self.values[p]);
+                    self.lookup_raw[look_bits] =
+                        (i16::from(l) << HUFF_LOOKAHEAD) | i16::from(self.values[p]);
                     look_bits += 1;
                 }
 

@@ -322,7 +322,7 @@ impl BitStream {
         };
         // look a head HUFF_LOOKAHEAD bits into the bitstream
         symbol = self.peek_bits::<HUFF_LOOKAHEAD>();
-        symbol = dc_table.lookup[symbol as usize];
+        symbol = dc_table.lookup(symbol as usize);
 
         decode_huff!(self, symbol, dc_table);
 
@@ -351,7 +351,7 @@ impl BitStream {
         };
         // look a head HUFF_LOOKAHEAD bits into the bitstream
         symbol = self.peek_bits::<HUFF_LOOKAHEAD>();
-        symbol = dc_table.lookup[symbol as usize];
+        symbol = dc_table.lookup(symbol as usize);
 
         decode_huff!(self, symbol, dc_table);
 
@@ -405,7 +405,7 @@ impl BitStream {
             self.refill(reader)?;
             symbol = self.peek_bits::<HUFF_LOOKAHEAD>();
             fast_ac = ac_lookup[symbol as usize];
-            symbol = ac_table.lookup[symbol as usize];
+            symbol = ac_table.lookup(symbol as usize);
 
             if fast_ac != 0 {
                 //  FAST AC path
@@ -465,7 +465,7 @@ impl BitStream {
             self.refill(reader)?;
             symbol = self.peek_bits::<HUFF_LOOKAHEAD>();
             fast_ac = ac_lookup[symbol as usize];
-            symbol = ac_table.lookup[symbol as usize];
+            symbol = ac_table.lookup(symbol as usize);
 
             if fast_ac != 0 {
                 //  FAST AC path
@@ -591,7 +591,7 @@ impl BitStream {
 
             symbol = self.peek_bits::<HUFF_LOOKAHEAD>();
             fac = fast_ac[symbol as usize];
-            symbol = ac_table.lookup[symbol as usize];
+            symbol = ac_table.lookup(symbol as usize);
 
             if fac != 0 {
                 // fast ac path
@@ -647,7 +647,7 @@ impl BitStream {
                 self.refill(reader)?;
 
                 symbol = self.peek_bits::<HUFF_LOOKAHEAD>();
-                symbol = table.lookup[symbol as usize];
+                symbol = table.lookup(symbol as usize);
 
                 decode_huff!(self, symbol, table);
 
